@@ -72,10 +72,12 @@ func main() {
 	// example: /public/assets/images/example.png
 	r.StaticFS("/public", http.FS(assets))
 	ttblCtrl := controllers.TimetableController{}
+	tdCtrl := controllers.TrainDetailsController{}
 	r.GET("/tt", ttblCtrl.Render)
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 	})
+	r.GET("/m", tdCtrl.Render)
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
