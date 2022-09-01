@@ -1,0 +1,46 @@
+{{define "title"}}Home{{end}}
+{{define "file" }}timetable{{end}}
+{{define "main" }}
+<ul class="list-group">
+
+    {{ range $x, $value := .w }}
+    <li class="list-group-item">
+        <a href="#" class="text-decoration-none">
+            <div class="d-flex" style="
+                padding: 2px 5px;
+                border-radius: 4px;
+                color: #{{$value.Kind.BackgrouColorCode}}; 
+            ">
+                <div class="align-items-center d-flex flex-shrink-0 justify-content-center" style="
+                margin: 2px;
+                border-radius: 3px;
+                padding: 5px;
+                margin-right:1ch;
+                width: 4ch;
+                {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
+                fill: #{{$value.ViszonylatiJel.FontSzinKod}}; 
+                border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+                background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
+                {{else}}
+                fill: #{{$value.Kind.ForegroundColorCode}}; 
+                border: 1px solid #{{$value.Kind.BackgrouColorCode}};
+                background-color:#{{$value.Kind.BackgrouColorCode}}
+                {{end}}
+                
+                
+            ">
+            <pre style="display:none;">
+                {{$value.Kind}}
+            </pre>
+                    <svg style="height: 12px; width:24px; ">
+                        <use href="#icon-train-{{$value.FullType|toIconName}}" />
+                    </svg>
+                </div>
+                {{$value.FullShortType|toTrainType}}{{ $value.FullName }} {{$value.StartStation.Name}}
+                {{$value.Start|loctime}} -> {{$value.EndStation.Name}} {{$value.Arrive}}
+            </div>
+        </a>
+    </li>
+    {{ end }}
+</ul>
+{{end}}
