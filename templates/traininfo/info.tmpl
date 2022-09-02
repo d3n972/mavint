@@ -6,10 +6,15 @@
 {{define "main" }}
 
 <pre>
-
+{{.info}}
 </pre>
 <h3>{{.info.Train.FullName}} </h3>
 <h4>{{.info.Train.StartStation.Name}} -> {{.info.Train.EndStation.Name}}</h4>
+<h5 style="font-family:MNR;">
+{{ range $x, $svc := .info.Train.Services}}
+    <span title="{{$svc.Description}}" class="mx-2">{{$svc.Sign.Character}}</span>
+{{ end }}
+</h5>
 <ul class="list-group">
 
     {{ range $x, $value := .info.Scheduler }}
@@ -17,6 +22,11 @@
        class="list-group-item"
        > 
        {{$value.Station.Name}}
+       <div class="d-inline float-end">
+       {{ range $x, $svc := $value.Services}}
+            <span  class="mnr" title="{{$svc.Description}}" class="mx-2">{{$svc.Sign.Character}}</span>
+        {{ end }}
+       </div>
        </li>
     {{ end }}
 </ul>

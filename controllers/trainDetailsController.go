@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -12,22 +13,34 @@ import (
 
 type TrainDetailsController struct {
 }
+type Payload struct {
+	Type        string `json:"type"`
+	TravelDate  string `json:"travelDate"`
+	MinCount    string `json:"minCount"`
+	MaxCount    string `json:"maxCount"`
+	TrainID     int    `json:"trainId,omitempty"`
+	TrainNumber string `json:"trainNumber,omitempty"`
+}
 
-func (c *TrainDetailsController) getApiResponse() []byte {
-	type Payload struct {
-		Type        string `json:"type"`
-		TravelDate  string `json:"travelDate"`
-		MinCount    string `json:"minCount"`
-		MaxCount    string `json:"maxCount"`
-		TrainNumber string `json:"trainNumber"`
-	}
-
-	data := Payload{
-		MaxCount:    "9999999",
-		MinCount:    "0",
-		TrainNumber: "707",
-		TravelDate:  "2022-08-31T22:00:00.000Z",
-		Type:        "TrainInfo",
+func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
+	var data Payload
+	if ctx.Params.ByName("train_id") != "" {
+		i, _ := strconv.Atoi(ctx.Params.ByName("train_id"))
+		data = Payload{
+			MaxCount:   "9999999",
+			MinCount:   "0",
+			TrainID:    i,
+			TravelDate: "2022-08-31T22:00:00.000Z",
+			Type:       "TrainInfo",
+		}
+	} else {
+		data = Payload{
+			MaxCount:    "9999999",
+			MinCount:    "0",
+			TrainNumber: "707",
+			TravelDate:  "2022-08-31T22:00:00.000Z",
+			Type:        "TrainInfo",
+		}
 	}
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
@@ -427,11 +440,14 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 		RouteSchedulerDetails   interface{} `json:"routeSchedulerDetails"`
 	}
 
-	apiresp := c.getApiResponse()
+	apiresp := c.getApiResponse(ctx)
 	instance := TrainDetailsResponse{}
 	json.Unmarshal(apiresp, &instance)
 
-	ctx.HTML(http.StatusOK, "traininfo.tmpl", gin.H{
+	dJSON, _ := json.MarshalIndent(instance.TrainSchedulerDetails, "", "    ")
+
+	ctx.HTML(http.StatusOK, "traininfo/info", gin.H{
 		"info": instance.TrainSchedulerDetails[0],
+		"data": string(dJSON),
 	})
 }
