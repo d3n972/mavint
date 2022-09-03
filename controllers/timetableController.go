@@ -263,8 +263,8 @@ type StationTimeTable struct {
 				} `json:"sign"`
 				TrainStopKind interface{} `json:"trainStopKind"`
 			} `json:"services"`
-			ActualOrEstimatedStart  interface{} `json:"actualOrEstimatedStart"`
-			ActualOrEstimatedArrive time.Time   `json:"actualOrEstimatedArrive"`
+			ActualOrEstimatedStart  *time.Time `json:"actualOrEstimatedStart"`
+			ActualOrEstimatedArrive *time.Time `json:"actualOrEstimatedArrive"`
 			HavarianInfok           struct {
 				AktualisKeses float64 `json:"aktualisKeses"`
 				KesesiOk      *string `json:"kesesiOk"`

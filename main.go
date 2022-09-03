@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"html/template"
 	"net/http"
 	"strings"
@@ -13,11 +14,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//go:embed templates/*
-var templates embed.FS
-
 //go:embed assets/*
 var assets embed.FS
+
+type QQ_1 struct {
+	Arrive                  *time.Time `json:"arrive"`
+	Start                   *time.Time `json:"start"`
+	ActualOrEstimatedArrive *time.Time `json:"actualOrEstimatedArrive"`
+	ActualOrEstimatedStart  *time.Time `json:"actualOrEstimatedStart"`
+}
 
 func main() {
 	r := gin.Default()
@@ -27,6 +32,34 @@ func main() {
 		Extension: ".tmpl",
 		Master:    "layouts/master",
 		Funcs: template.FuncMap{
+			"timediff": func(station controllers.TD_Scheduler) string {
+				if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {
+					t1 := *station.Arrive
+					t2 := *station.ActualOrEstimatedArrive
+					delta := t2.Sub(t1)
+					if delta.Minutes() > 0 {
+						strDelay := time.Time{}.Add(delta).Format("15 óra 04 perc")
+						return "Késés: " + strings.Replace(strDelay, "00 óra ", "", -1)
+					}
+				}
+				return ""
+			},
+			"delayInRange": func(a float64, b float64, c float64) bool {
+				fmt.Printf("float64[a, b, c]: %v\n", []float64{a, b, c})
+				if a > b && a < c {
+					return true
+				}
+				return false
+			},
+			"timediffMins": func(station controllers.TD_Scheduler) float64 {
+				if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {
+					t1 := *station.Arrive
+					t2 := *station.ActualOrEstimatedArrive
+					delta := t2.Sub(t1)
+					return delta.Minutes()
+				}
+				return 0
+			},
 			"getColorOrFallback": func(a *string, b *string) string {
 				if a == nil {
 					return *b

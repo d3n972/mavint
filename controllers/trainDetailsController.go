@@ -11,6 +11,50 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type TD_Scheduler struct {
+	Station struct {
+		ID                            int    `json:"id"`
+		IsAlias                       bool   `json:"isAlias"`
+		Name                          string `json:"name"`
+		Code                          string `json:"code"`
+		BaseCode                      string `json:"baseCode"`
+		IsInternational               bool   `json:"isInternational"`
+		CanUseForOfferRequest         bool   `json:"canUseForOfferRequest"`
+		CanUseForPessengerInformation bool   `json:"canUseForPessengerInformation"`
+		Country                       string `json:"country"`
+		CoutryIso                     string `json:"coutryIso"`
+		IsIn1081                      bool   `json:"isIn108_1"`
+	} `json:"station"`
+	Arrive                  *time.Time  `json:"arrive"`
+	Start                   *time.Time  `json:"start"`
+	ActualOrEstimatedArrive *time.Time  `json:"actualOrEstimatedArrive"`
+	ActualOrEstimatedStart  *time.Time  `json:"actualOrEstimatedStart"`
+	StartTrack              interface{} `json:"startTrack"`
+	EndTrack                interface{} `json:"endTrack"`
+	Services                []struct {
+		ListOrder                   interface{} `json:"listOrder"`
+		Description                 string      `json:"description"`
+		RestrictiveStartStationCode interface{} `json:"restrictiveStartStationCode"`
+		RestrictiveEndStationCode   interface{} `json:"restrictiveEndStationCode"`
+		Sign                        struct {
+			FontName  string `json:"fontName"`
+			Character string `json:"character"`
+		} `json:"sign"`
+		TrainStopKind interface{} `json:"trainStopKind"`
+	} `json:"services"`
+	StopKind    int `json:"stopKind"`
+	StopService struct {
+		ListOrder                   interface{} `json:"listOrder"`
+		Description                 interface{} `json:"description"`
+		RestrictiveStartStationCode interface{} `json:"restrictiveStartStationCode"`
+		RestrictiveEndStationCode   interface{} `json:"restrictiveEndStationCode"`
+		Sign                        interface{} `json:"sign"`
+		TrainStopKind               interface{} `json:"trainStopKind"`
+	} `json:"stopService"`
+	Distance       int         `json:"distance"`
+	StartTimeZone  string      `json:"startTimeZone"`
+	ArriveTimeZone interface{} `json:"arriveTimeZone"`
+}
 type TrainDetailsController struct {
 }
 type Payload struct {
@@ -37,8 +81,8 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 		data = Payload{
 			MaxCount:    "9999999",
 			MinCount:    "0",
-			TrainNumber: "707",
-			TravelDate:  "2022-08-31T22:00:00.000Z",
+			TrainNumber: "716",
+			TravelDate:  "2022-09-03T00:00:00.000Z",
 			Type:        "TrainInfo",
 		}
 	}
@@ -252,8 +296,8 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 					} `json:"sign"`
 					TrainStopKind interface{} `json:"trainStopKind"`
 				} `json:"services"`
-				ActualOrEstimatedStart  interface{} `json:"actualOrEstimatedStart"`
-				ActualOrEstimatedArrive interface{} `json:"actualOrEstimatedArrive"`
+				ActualOrEstimatedStart  *time.Time `json:"actualOrEstimatedStart"`
+				ActualOrEstimatedArrive *time.Time `json:"actualOrEstimatedArrive"`
 				HavarianInfok           struct {
 					AktualisKeses float64     `json:"aktualisKeses"`
 					KesesiOk      interface{} `json:"kesesiOk"`
@@ -391,50 +435,7 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 				ArriveTimeZone interface{} `json:"arriveTimeZone"`
 				TrainID        string      `json:"trainId"`
 			} `json:"train"`
-			Scheduler []struct {
-				Station struct {
-					ID                            int    `json:"id"`
-					IsAlias                       bool   `json:"isAlias"`
-					Name                          string `json:"name"`
-					Code                          string `json:"code"`
-					BaseCode                      string `json:"baseCode"`
-					IsInternational               bool   `json:"isInternational"`
-					CanUseForOfferRequest         bool   `json:"canUseForOfferRequest"`
-					CanUseForPessengerInformation bool   `json:"canUseForPessengerInformation"`
-					Country                       string `json:"country"`
-					CoutryIso                     string `json:"coutryIso"`
-					IsIn1081                      bool   `json:"isIn108_1"`
-				} `json:"station"`
-				Arrive                  interface{} `json:"arrive"`
-				Start                   time.Time   `json:"start"`
-				ActualOrEstimatedArrive interface{} `json:"actualOrEstimatedArrive"`
-				ActualOrEstimatedStart  time.Time   `json:"actualOrEstimatedStart"`
-				StartTrack              interface{} `json:"startTrack"`
-				EndTrack                interface{} `json:"endTrack"`
-				Services                []struct {
-					ListOrder                   interface{} `json:"listOrder"`
-					Description                 string      `json:"description"`
-					RestrictiveStartStationCode interface{} `json:"restrictiveStartStationCode"`
-					RestrictiveEndStationCode   interface{} `json:"restrictiveEndStationCode"`
-					Sign                        struct {
-						FontName  string `json:"fontName"`
-						Character string `json:"character"`
-					} `json:"sign"`
-					TrainStopKind interface{} `json:"trainStopKind"`
-				} `json:"services"`
-				StopKind    int `json:"stopKind"`
-				StopService struct {
-					ListOrder                   interface{} `json:"listOrder"`
-					Description                 interface{} `json:"description"`
-					RestrictiveStartStationCode interface{} `json:"restrictiveStartStationCode"`
-					RestrictiveEndStationCode   interface{} `json:"restrictiveEndStationCode"`
-					Sign                        interface{} `json:"sign"`
-					TrainStopKind               interface{} `json:"trainStopKind"`
-				} `json:"stopService"`
-				Distance       int         `json:"distance"`
-				StartTimeZone  string      `json:"startTimeZone"`
-				ArriveTimeZone interface{} `json:"arriveTimeZone"`
-			} `json:"scheduler"`
+			Scheduler []TD_Scheduler `json:"scheduler"`
 		} `json:"trainSchedulerDetails"`
 		StationSchedulerDetails interface{} `json:"stationSchedulerDetails"`
 		RouteSchedulerDetails   interface{} `json:"routeSchedulerDetails"`
