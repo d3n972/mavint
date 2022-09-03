@@ -2,12 +2,15 @@
 {{define "title"}}Home{{end}}
 
 {{define "main" }}
+
 <ul class="list-group">
 
     {{ range $x, $value := .w }}
+    <pre>
+    {{.w}}
+    </pre>
        <li 
        class="list-group-item"
-       
        > 
         <div class="d-flex" style="
         padding: 2px 5px;

@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -26,9 +27,10 @@ func (tt *TimetableController) callApi() []byte {
 		MaxCount:          "9999999",
 		MinCount:          "0",
 		StationNumberCode: "005510033",
-		TravelDate:        "2022-08-31T00:00:00.000Z",
+		TravelDate:        time.Now().Local().Format("2006-01-02T03:04:05.000Z"),
 		Type:              "StationInfo",
 	}
+	fmt.Printf("data.TravelDate: %v\n", data.TravelDate)
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
 		// handle err
@@ -37,7 +39,7 @@ func (tt *TimetableController) callApi() []byte {
 
 	req, err := http.NewRequest("POST", "https://jegy-a.mav.hu/IK_API_PROD/api/InformationApi/GetTimetable", body)
 	if err != nil {
-		// handle err
+		panic(err)
 	}
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 	req.Header.Set("Accept-Language", "en-US,en-GB;q=0.9,en;q=0.8,hu-HU;q=0.7,hu;q=0.6")
