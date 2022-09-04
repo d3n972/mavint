@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -446,7 +447,7 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	json.Unmarshal(apiresp, &instance)
 
 	dJSON, _ := json.MarshalIndent(instance.TrainSchedulerDetails, "", "    ")
-
+	fmt.Printf("dJSON: %v\n", string(apiresp))
 	ctx.HTML(http.StatusOK, "traininfo/info", gin.H{
 		"info": instance.TrainSchedulerDetails[0],
 		"data": string(dJSON),

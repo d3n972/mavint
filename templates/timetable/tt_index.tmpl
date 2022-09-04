@@ -18,24 +18,22 @@
                 margin-right:1ch;
                 width: 4ch;
                 {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
-                fill: #{{$value.ViszonylatiJel.FontSzinKod}}; 
-                border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
-                background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
+                    fill: #{{$value.ViszonylatiJel.FontSzinKod}}; 
+                    border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+                    background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
                 {{else}}
-                fill: #{{$value.Kind.ForegroundColorCode}}; 
-                border: 1px solid #{{$value.Kind.BackgrouColorCode}};
-                background-color:#{{$value.Kind.BackgrouColorCode}}
+                    fill: #{{$value.Kind.ForegroundColorCode}}; 
+                    border: 1px solid #{{$value.Kind.BackgrouColorCode}};
+                    background-color:#{{$value.Kind.BackgrouColorCode}}
                 {{end}}
                 
                 
             ">
-            <pre style="display:none;">
-                {{$value.Kind}}
-            </pre>
                     <svg style="height: 12px; width:24px; ">
                         <use href="#icon-train-{{$value.FullType|toIconName}}" />
                     </svg>
                 </div>
+
                 {{$value.FullShortType|toTrainType}}{{ $value.FullName }} {{$value.StartStation.Name}}
                 {{$value.Start|loctime}} -> {{$value.EndStation.Name}} {{$value.Arrive}}
             </div>
