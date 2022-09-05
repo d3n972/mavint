@@ -4,7 +4,7 @@ import "time"
 
 type STT_ArrivalScheduler struct {
 	AggregatedServiceIds        []interface{} `json:"aggregatedServiceIds"`
-	Name                        interface{}   `json:"name"`
+	Name                        *string       `json:"name"`
 	SeatReservationCode         string        `json:"seatReservationCode"`
 	Code                        string        `json:"code"`
 	CompanyCode                 interface{}   `json:"companyCode"`
@@ -176,11 +176,11 @@ type STT_ArrivalScheduler struct {
 	ActualOrEstimatedStart  *time.Time `json:"actualOrEstimatedStart"`
 	ActualOrEstimatedArrive *time.Time `json:"actualOrEstimatedArrive"`
 	HavarianInfok           struct {
-		AktualisKeses int    `json:"aktualisKeses"`
-		KesesiOk      string `json:"kesesiOk"`
-		HavariaInfo   string `json:"havariaInfo"`
-		UzletiInfo    string `json:"uzletiInfo"`
-		KesesInfo     string `json:"kesesInfo"`
+		AktualisKeses float64 `json:"aktualisKeses"`
+		KesesiOk      string  `json:"kesesiOk"`
+		HavariaInfo   string  `json:"havariaInfo"`
+		UzletiInfo    string  `json:"uzletiInfo"`
+		KesesInfo     string  `json:"kesesInfo"`
 	} `json:"havarianInfok"`
 	DirectTrains         interface{} `json:"directTrains"`
 	CarrierTrains        interface{} `json:"carrierTrains"`

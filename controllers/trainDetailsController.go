@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/d3n972/mavint/models"
 	"github.com/gin-gonic/gin"
@@ -25,13 +26,15 @@ type Payload struct {
 
 func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 	var data Payload
+	fromDate := time.Now()
+	localTZ, _ := time.LoadLocation("Europe/Budapest")
 	if ctx.Params.ByName("train_id") != "" {
 		i, _ := strconv.Atoi(ctx.Params.ByName("train_id"))
 		data = Payload{
 			MaxCount:   "9999999",
 			MinCount:   "0",
 			TrainID:    i,
-			TravelDate: "2022-08-31T22:00:00.000Z",
+			TravelDate: time.Date(fromDate.Year(), fromDate.Month(), fromDate.Day(), 0, 0, 0, 0, localTZ).Local().Format(time.RFC3339),
 			Type:       "TrainInfo",
 		}
 	} else {

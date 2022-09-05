@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"github.com/d3n972/mavint/models"
 	"html/template"
 	"net/http"
 	"strings"
@@ -17,22 +18,16 @@ import (
 //go:embed assets/*
 var assets embed.FS
 
-type QQ_1 struct {
-	Arrive                  *time.Time `json:"arrive"`
-	Start                   *time.Time `json:"start"`
-	ActualOrEstimatedArrive *time.Time `json:"actualOrEstimatedArrive"`
-	ActualOrEstimatedStart  *time.Time `json:"actualOrEstimatedStart"`
-}
-
 func main() {
 	r := gin.Default()
+	r.TrustedPlatform = gin.PlatformCloudflare
 
 	r.HTMLRender = ginview.New(goview.Config{
 		Root:      "templates",
 		Extension: ".tmpl",
 		Master:    "layouts/master",
 		Funcs: template.FuncMap{
-			"timediff": func(station controllers.TD_Scheduler) string {
+			"timediff": func(station models.TD_Scheduler) string {
 				if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {
 					t1 := *station.Arrive
 					t2 := *station.ActualOrEstimatedArrive
@@ -46,19 +41,30 @@ func main() {
 			},
 			"delayInRange": func(a float64, b float64, c float64) bool {
 				fmt.Printf("float64[a, b, c]: %v\n", []float64{a, b, c})
-				if a > b && a < c {
+				if a >= b && a < c {
 					return true
 				}
 				return false
 			},
-			"timediffMins": func(station controllers.TD_Scheduler) float64 {
+			"timediffMins": func(station models.TD_Scheduler) float64 {
 				if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {
 					t1 := *station.Arrive
-					t2 := *station.ActualOrEstimatedArrive
+					t2 := station.ActualOrEstimatedArrive
 					delta := t2.Sub(t1)
+					fmt.Sprintln("delta: %d", delta)
 					return delta.Minutes()
 				}
 				return 0
+			},
+			"delayReasons": func(s models.TS_TrainSchedDetails) string {
+				return strings.Join(s.Train.HavarianInfok.HavariaInfo, " ")
+			},
+			"getExpectedHHMM": func(t time.Time) string {
+				return t.Format("15 óra 04 perc")
+			},
+			"isTrainDeparted": func(t time.Time) bool {
+				now := time.Now()
+				return now.After(t)
 			},
 			"getColorOrFallback": func(a *string, b *string) string {
 				if a == nil {
@@ -104,8 +110,19 @@ func main() {
 					return t
 				}
 			},
-			"loctime": func(x time.Time) string {
-				return x.Local().Format(time.Kitchen)
+			"loctime": func(x *time.Time) string {
+				if x != nil {
+					t := x.Local()
+					return t.Format("15:04")
+				}
+				return ""
+			},
+			"getTrainName": func(x models.STT_ArrivalScheduler) string {
+				if x.Name == nil {
+					fmt.Printf("Code: %s, FType: %s\n", x.Code, x.FullShortType)
+					return x.Code + " " + x.FullType
+				}
+				return x.FullShortType + " " + x.Code + " " + *x.Name
 			},
 		},
 		DisableCache: true,

@@ -4,38 +4,89 @@
 
 {{define "main" }}
 
-<h3>{{.info.Train.FullName}} </h3>
-<h4>{{.info.Train.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{.info.Train.EndStation.Name}}</h4>
-{{ if ne .info.Train.HavarianInfok.KesesiOk nil}}
-<div class="alert alert-danger" role="alert">
-  {{.info.Train.HavarianInfok.KesesiOk}}
-</div>
-{{end}}
-<h5 style="font-family:MNR;">
-{{ range $x, $svc := .info.Train.Services}}
-    <span title="{{$svc.Description}}" class="mx-2">{{$svc.Sign.Character}}</span>
-{{ end }}
-</h5>
-<ul class="list-group">
-
-    {{ range $x, $value := .info.Scheduler }}
-       <li 
-       class="list-group-item"
-       > 
-       {{$value.Station.Name}} 
-       {{ if delayInRange (timediffMins $value) 0.0 2.0 }}
-       <span class="badge bg-success">{{timediff $value}}</span>
-       {{ else if  delayInRange (timediffMins $value) 2.0 5.0  }}
-         <span class="badge bg-warning">{{timediff $value}}</span>
-        {{ else if  delayInRange (timediffMins $value) 5.0 99.0 }}
-         <span class="badge bg-danger">{{timediff $value}}</span>
-       {{end}}
-       <div class="d-inline float-end">
-       {{ range $x, $svc := $value.Services}}
-            <span  class="mnr" title="{{$svc.Description}}" class="mx-2">{{$svc.Sign.Character}}</span>
+    <h3>{{.info.Train.FullName}} </h3>
+    <h4>{{.info.Train.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{.info.Train.EndStation.Name}}</h4>
+    {{ if .info.Train.HavarianInfok.AktualisKeses}}
+        <div class="alert alert-danger" role="alert">
+            <p>{{.info.Train.HavarianInfok.KesesiOk}}</p>
+            <p>{{.info| delayReasons}}</p>
+        </div>
+    {{end}}
+    <h5 style="font-family:MNR;">
+        {{ range $x, $svc := .info.Train.Services}}
+            <span title="{{$svc.Description}}" class="mx-2">{{$svc.Sign.Character}}</span>
         {{ end }}
-       </div>
-       </li>
-    {{ end }}
-</ul>
+    </h5>
+    <ul class="list-group">
+
+        {{ range $x, $value := .info.Scheduler }}
+            <li class="list-group-item
+            {{if (delayInRange (timediffMins $value) 0.0 2.0)}}
+                list-group-item-success
+            {{else if (delayInRange (timediffMins $value) 2.0 3.0)}}
+                list-group-item-warning
+            {{else  if (delayInRange (timediffMins $value) 3.0 999.0)}}
+                list-group-item-danger
+            {{end}}
+">
+
+                <div class="row">
+                    <div class="col-1">
+                        <div class="row">
+                            <div class="col-6">
+                                {{ if ne (loctime $value.Arrive) "" }}
+                                    {{$value.Arrive | loctime}}
+                                {{end}}
+                            </div>
+                            <div class="col-6">
+                                {{ if ne (loctime $value.ActualOrEstimatedArrive) "" }}
+
+                                    {{if $value.ActualOrEstimatedArrive | isTrainDeparted}}
+                                        <span class="text-decoration-line-through">
+                                    {{end}}
+                                    {{$value.ActualOrEstimatedArrive | loctime}}
+                                    {{if $value.ActualOrEstimatedArrive | isTrainDeparted}}
+                                        </span>
+                                    {{end}}
+                                {{end}}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                {{ if ne (loctime $value.Start) "" }}
+                                    {{$value.Start | loctime}}
+                                {{end}}
+                            </div>
+                            <div class="col-6">
+                                {{ if ne (loctime $value.ActualOrEstimatedStart) "" }}
+                                    {{if $value.ActualOrEstimatedStart | isTrainDeparted}}
+                                        <span class="text-decoration-line-through">
+                                    {{end}}
+                                    {{$value.ActualOrEstimatedStart | loctime}}
+                                    {{if $value.ActualOrEstimatedStart | isTrainDeparted}}
+                                        </span>
+                                    {{end}}
+                                {{end}}</div>
+                        </div>
+
+                    </div>
+                    <div class="col">
+                        <strong>{{$value.Station.Name}}</strong>
+                        {{ if delayInRange (timediffMins $value) 0.0 2.0 }}
+                            <span class="badge bg-success">{{timediff $value}}</span>
+                        {{ else if  delayInRange (timediffMins $value) 2.0 5.0  }}
+                            <span class="badge bg-warning">{{timediff $value}}</span>
+                        {{ else if  delayInRange (timediffMins $value) 5.0 99.0 }}
+                            <span class="badge bg-danger">{{timediff $value}}</span>
+                        {{end}}
+                        <div class="d-inline float-end">
+                            {{ range $x, $svc := $value.Services}}
+                                <span class="mnr" title="{{$svc.Description}}"
+                                      class="mx-2">{{$svc.Sign.Character}}</span>
+                            {{ end }}
+                        </div>
+                    </div>
+                </div>
+            </li>
+        {{ end }}
+    </ul>
 {{end}}

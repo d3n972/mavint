@@ -23,12 +23,13 @@ func (tt *TimetableController) callApi() []byte {
 		MinCount          string `json:"minCount"`
 		MaxCount          string `json:"maxCount"`
 	}
-
+	fromDate := time.Now()
+	localTZ, _ := time.LoadLocation("Europe/Budapest")
 	data := Payload{
 		MaxCount:          "9999999",
 		MinCount:          "0",
-		StationNumberCode: "005510033",
-		TravelDate:        time.Now().Local().Format("2006-01-02T03:04:05.000Z"),
+		StationNumberCode: "005517111",
+		TravelDate:        time.Date(fromDate.Year(), fromDate.Month(), fromDate.Day(), 0, 0, 0, 0, localTZ).Local().Format(time.RFC3339),
 		Type:              "StationInfo",
 	}
 	fmt.Printf("data.TravelDate: %v\n", data.TravelDate)
