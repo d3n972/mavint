@@ -132,12 +132,14 @@ func main() {
 	r.StaticFS("/public", http.FS(assets))
 	ttblCtrl := controllers.TimetableController{}
 	tdCtrl := controllers.TrainDetailsController{}
+	ticketCtrl := controllers.TicketController{}
 	r.GET("/tt", ttblCtrl.Render)
 	r.GET("/m", tdCtrl.Render)
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{})
 	})
 	r.GET("/train/:train_id", tdCtrl.Render)
+	r.GET("/ticket", ticketCtrl.Render)
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "pong",
