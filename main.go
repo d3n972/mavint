@@ -18,6 +18,9 @@ import (
 //go:embed assets/*
 var assets embed.FS
 
+//go:embed public/*
+var pwaManifest embed.FS
+
 func main() {
 	r := gin.Default()
 	r.TrustedPlatform = gin.PlatformCloudflare
@@ -67,7 +70,7 @@ func main() {
 			},
 			"isTrainDeparted": func(t time.Time) bool {
 				now := time.Now()
-				if now.Hour() > 12 && t.Hour() < 12 {
+				if now.Hour() > 12 && t.Hour() < 6 {
 					t = t.AddDate(0, 0, 1)
 				}
 				fmt.Println(t.Format(time.RFC3339))
@@ -137,6 +140,7 @@ func main() {
 	})
 
 	r.StaticFS("/public", http.FS(assets))
+	r.StaticFS("/app", http.FS(pwaManifest))
 	ttblCtrl := controllers.TimetableController{}
 	tdCtrl := controllers.TrainDetailsController{}
 	ticketCtrl := controllers.TicketController{}
