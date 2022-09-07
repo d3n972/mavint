@@ -26,23 +26,22 @@ type Payload struct {
 
 func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 	var data Payload
-	fromDate := time.Now()
-	localTZ, _ := time.LoadLocation("Europe/Budapest")
 	if ctx.Params.ByName("train_id") != "" {
-		i, _ := strconv.Atoi(ctx.Params.ByName("train_id"))
+		i, _ := strconv.Atoi(ctx.Params.ByName("train"))
 		data = Payload{
 			MaxCount:   "9999999",
 			MinCount:   "0",
 			TrainID:    i,
-			TravelDate: time.Date(fromDate.Year(), fromDate.Month(), fromDate.Day(), 0, 0, 0, 0, localTZ).Local().Format(time.RFC3339),
+			TravelDate: time.Now().Format("2006-01-02T00:00:00Z"),
 			Type:       "TrainInfo",
 		}
 	} else {
+		fmt.Println("xxx" + time.Now().Format("2006-01-02T00:00:00Z"))
 		data = Payload{
 			MaxCount:    "9999999",
 			MinCount:    "0",
-			TrainNumber: "716",
-			TravelDate:  "2022-09-03T00:00:00.000Z",
+			TrainNumber: ctx.Query("tid"),
+			TravelDate:  time.Now().Format("2006-01-02T00:00:00Z"),
 			Type:        "TrainInfo",
 		}
 	}
@@ -87,10 +86,21 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	instance := models.TrainDetailsResponse{}
 	json.Unmarshal(apiresp, &instance)
 
-	dJSON, _ := json.MarshalIndent(instance.TrainSchedulerDetails, "", "    ")
-	fmt.Printf("dJSON: %v\n", string(apiresp))
+	train := instance.TrainSchedulerDetails[0]
+	if tid := ctx.Query("train"); tid != "" {
+		for _, detail := range instance.TrainSchedulerDetails {
+			if detail.Train.TrainID == tid {
+				fmt.Println(tid)
+				train = detail
+			}
+		}
+	}
+
 	ctx.HTML(http.StatusOK, "traininfo/info", gin.H{
-		"info": instance.TrainSchedulerDetails[0],
-		"data": string(dJSON),
+		"info":            train,
+		"tid":             ctx.Query("tid"),
+		"selectedTrainID": train.Train.TrainID,
+		"trains":          instance.TrainSchedulerDetails,
+		"numberOfTrains":  len(instance.TrainSchedulerDetails),
 	})
 }

@@ -41,7 +41,6 @@ func (t *TicketController) apiCall() {
 	//tStart, _ := time.Parse("2006-01-02T15:04:05-07:00", "2022-09-06T00:00:00+02:00")
 
 	data := Payload{
-		EndStationCode:             "005590997",
 		EszkozSzamok:               []string{},
 		InnerStationsCodes:         []string{},
 		IsOfDetailedSearch:         false,
@@ -61,9 +60,10 @@ func (t *TicketController) apiCall() {
 			"BUDAPESTI_HELYI_KOZLEKEDESSEL",
 		},
 		SelectedServices: []int{52},
-		StartStationCode: "005510009",
-		TravelReturnDate: "2022-09-06T00:30:00+02:00",
-		TravelStartDate:  "2022-09-06T00:00:00+02:00",
+		StartStationCode: "005517111",
+		EndStationCode:   "005513912",
+		TravelReturnDate: "2022-09-07T00:30:00+02:00",
+		TravelStartDate:  "2022-09-07T00:00:00+02:00",
 	}
 	payloadBytes, err := json.Marshal(data)
 	if err != nil {
@@ -99,7 +99,10 @@ func (t *TicketController) apiCall() {
 	json.Unmarshal(respBytes, &m)
 	route := m.Route[1]
 	ticket := route.Details.Tickets[0]
-
+	sumPrice := 0.0
+	for _, s := range route.Details.Tickets {
+		sumPrice += s.GrossPrice.Amount
+	}
 	fmt.Printf(`
 %s
 %s %s
@@ -111,12 +114,12 @@ Km: MÁV/0/%.1f
 Ára összesen:	%s  **%.0f
 
 `, route.Details.Routes[0].StartStation.Name,
-		route.Details.Routes[0].DestionationStation.Name,
+		route.Details.Routes[1].DestionationStation.Name,
 		route.Details.Routes[0].TouchedStationsString,
 		route.Details.Routes[0].TravelClasses[0].Name,
 		route.Details.Routes[0].Distance,
 		ticket.GrossPrice.Currency.Key,
-		ticket.GrossPrice.Amount,
+		sumPrice,
 	)
 
 	if err != nil {

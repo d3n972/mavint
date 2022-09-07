@@ -41,6 +41,9 @@ func main() {
 			},
 			"delayInRange": func(a float64, b float64, c float64) bool {
 				fmt.Printf("float64[a, b, c]: %v\n", []float64{a, b, c})
+				if a < 0 {
+					return true
+				}
 				if a >= b && a < c {
 					return true
 				}
@@ -64,6 +67,10 @@ func main() {
 			},
 			"isTrainDeparted": func(t time.Time) bool {
 				now := time.Now()
+				if now.Hour() > 12 && t.Hour() < 12 {
+					t = t.AddDate(0, 0, 1)
+				}
+				fmt.Println(t.Format(time.RFC3339))
 				return now.After(t)
 			},
 			"getColorOrFallback": func(a *string, b *string) string {
@@ -136,7 +143,7 @@ func main() {
 	r.GET("/tt", ttblCtrl.Render)
 	r.GET("/m", tdCtrl.Render)
 	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.tmpl", gin.H{})
+		c.HTML(http.StatusOK, "pages/index", gin.H{})
 	})
 	r.GET("/train/:train_id", tdCtrl.Render)
 	r.GET("/ticket", ticketCtrl.Render)
