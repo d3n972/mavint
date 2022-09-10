@@ -55,15 +55,9 @@
                                 padding: 5px;
                                 margin-right:1ch;
                                 width: 4ch;
-                        {{if ne .info.Train.ViszonylatiJel.FontSzinKod  ""}}
-                            fill: #{{.info.Train.ViszonylatiJel.FontSzinKod}};
-                            border: 1px solid #{{.info.Train.ViszonylatiJel.FontSzinKod}};
-                            background-color:#{{.info.Train.ViszonylatiJel.HatterSzinKod}}
-                        {{else}}
-                            fill: #{{.info.Train.Kind.ForegroundColorCode}};
-                            border: 1px solid #{{.info.Train.Kind.BackgrouColorCode}};
-                            background-color:#{{.info.Train.Kind.BackgrouColorCode}}
-                        {{end}}
+                                fill: #{{.info.Train.Kind.ForegroundColorCode}};
+                                border: 1px solid #{{.info.Train.Kind.BackgrouColorCode}};
+                                background-color:#{{.info.Train.Kind.BackgrouColorCode}}
 
 
                                 ">
