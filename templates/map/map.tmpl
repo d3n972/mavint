@@ -1,0 +1,85 @@
+{{define "title"}}Home{{end}}
+{{define "container"}}container-fluid {{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent"}}
+ <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+   integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+   crossorigin=""/>
+<style>
+html, body, .container /*, and all other map parent selectors*/ {
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+#map {
+ /* width: auto;*/
+  height: 100%;
+}
+</style>
+{{end}}
+{{define "footerContent"}}
+ <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+   integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+   crossorigin=""></script>
+    <script src="/public/assets/js/TileLayer.Grayscale.js"></script> 
+    <script>
+    window.markerLayer={}
+
+        $(document).ready(_=>{
+            window.Lmap = L.map('map').setView([47.4979, 19.0402], 13);
+            L.tileLayer.grayscale('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                 maxZoom: 19,
+                 attribution: '© OpenStreetMap'
+            }).addTo(window.Lmap); 
+            var openrailwaymap = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/maxspeed/{z}/{x}/{y}.png',
+            {
+                attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Style: <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a> <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a> and OpenStreetMap',
+                minZoom: 2,
+                maxZoom: 19,
+                tileSize: 256
+            }).addTo(window.Lmap);
+            })
+             window.markerLayer=L.layerGroup([])
+            refreshData()
+          
+            function refreshData(){
+                fetch('/map/getdata').then(r=>r.json())
+                .then(r=>{
+                    let markers=[];
+                    r.Train.forEach(e=>{
+                        let iconStyle="green"
+
+                        if(e['@Delay']>6){
+                            iconStyle="red"
+                        }else if(e['@Delay']>4&&e['@Delay']<6){
+                            iconStyle="orange"
+                        }else if(e['@Delay']>1&&e['@Delay']<4){
+                            iconStyle="yellow"
+                        }else{
+                            iconStyle="green"
+                        }
+                        markers.push(L.marker([e['@Lat'], e['@Lon']],{
+                        icon:L.icon({
+                            iconUrl: '/public/assets/icons/ico-train-'+iconStyle+".png",
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 16],
+
+                        }),
+                        }).bindPopup(`<a href="/m?tid=${e['@TrainNumber'].replace('55','')}">${e['@Delay']+' '+e['@Relation']}</a>`))
+                    })
+                    let oldLayer=window.markerLayer
+                    window.markerLayer=L.layerGroup(markers)
+                    window.markerLayer.addTo(window.Lmap)
+                    window.Lmap.removeLayer(oldLayer)
+                   
+                    
+                })
+            }
+            setInterval(function(){refreshData()},5000)
+    </script>
+{{end}}
+
+{{define "main" }}
+ <div id="map" class="min-vh-100"></div>
+
+{{end}}

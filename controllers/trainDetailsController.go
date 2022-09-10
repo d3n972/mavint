@@ -26,7 +26,7 @@ type Payload struct {
 
 func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 	var data Payload
-	if ctx.Params.ByName("train_id") != "" {
+	if ctx.Params.ByName("train") != "" {
 		i, _ := strconv.Atoi(ctx.Params.ByName("train"))
 		data = Payload{
 			MaxCount:   "9999999",
@@ -46,6 +46,7 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 		}
 	}
 	payloadBytes, err := json.Marshal(data)
+	fmt.Printf("payloadBytes: %v\n", string(payloadBytes))
 	if err != nil {
 		// handle err
 	}

@@ -3,11 +3,12 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/d3n972/mavint/models"
 	"html/template"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/d3n972/mavint/models"
 
 	"github.com/d3n972/mavint/controllers"
 	"github.com/foolin/goview"
@@ -144,12 +145,16 @@ func main() {
 	ttblCtrl := controllers.TimetableController{}
 	tdCtrl := controllers.TrainDetailsController{}
 	ticketCtrl := controllers.TicketController{}
+	mapController := controllers.MapController{}
 	r.GET("/tt", ttblCtrl.Render)
 	r.GET("/m", tdCtrl.Render)
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "pages/index", gin.H{})
 	})
-	r.GET("/train/:train_id", tdCtrl.Render)
+	r.GET("/map", mapController.Render)
+	r.GET("/map/getdata", mapController.GetData)
+
+	r.GET("/train/:train", tdCtrl.Render)
 	r.GET("/ticket", ticketCtrl.Render)
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
