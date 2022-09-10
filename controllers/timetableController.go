@@ -15,7 +15,7 @@ import (
 type TimetableController struct {
 }
 
-func (tt *TimetableController) callApi() []byte {
+func (tt *TimetableController) callApi(ctx *gin.Context) []byte {
 	type Payload struct {
 		Type              string `json:"type"`
 		TravelDate        string `json:"travelDate"`
@@ -28,7 +28,7 @@ func (tt *TimetableController) callApi() []byte {
 	data := Payload{
 		MaxCount:          "9999999",
 		MinCount:          "0",
-		StationNumberCode: "005517111",
+		StationNumberCode: ctx.Params.ByName("station_code"),
 		TravelDate:        time.Date(fromDate.Year(), fromDate.Month(), fromDate.Day(), 0, 0, 0, 0, localTZ).Local().Format(time.RFC3339),
 		Type:              "StationInfo",
 	}
@@ -70,10 +70,12 @@ func (tt *TimetableController) callApi() []byte {
 	return ret
 }
 func (tt *TimetableController) Render(ctx *gin.Context) {
-	resp := tt.callApi()
+	resp := tt.callApi(ctx)
 	inst := models.StationTimeTable{}
 	json.Unmarshal(resp, &inst)
 	ctx.HTML(http.StatusOK, "timetable/tt_index", gin.H{
-		"w": inst.StationSchedulerDetails.ArrivalScheduler,
+		"station":   inst.StationSchedulerDetails,
+		"arrival":   inst.StationSchedulerDetails.ArrivalScheduler,
+		"departure": inst.StationSchedulerDetails.DepartureScheduler,
 	})
 }

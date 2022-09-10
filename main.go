@@ -128,12 +128,12 @@ func main() {
 				}
 				return ""
 			},
-			"getTrainName": func(x models.STT_ArrivalScheduler) string {
-				if x.Name == nil {
-					fmt.Printf("Code: %s, FType: %s\n", x.Code, x.FullShortType)
-					return x.Code + " " + x.FullType
+			"getTrainName": func(x any) string {
+				if x.(models.Scheduler).GetName() == nil {
+					fmt.Printf("Code: %s, FType: %s\n", x.(models.Scheduler).GetCode(), x.(models.Scheduler).GetFullShortType())
+					return x.(models.Scheduler).GetCode() + " " + x.(models.Scheduler).GetFullShortType()
 				}
-				return x.FullShortType + " " + x.Code + " " + *x.Name
+				return x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName() + " " + x.(models.Scheduler).GetFullShortType()
 			},
 		},
 		DisableCache: true,
@@ -147,6 +147,7 @@ func main() {
 	ticketCtrl := controllers.TicketController{}
 	mapController := controllers.MapController{}
 	r.GET("/tt", ttblCtrl.Render)
+	r.GET("/station/:station_code", ttblCtrl.Render)
 	r.GET("/m", tdCtrl.Render)
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "pages/index", gin.H{})

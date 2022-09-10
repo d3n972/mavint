@@ -1,9 +1,22 @@
 {{define "title"}}Home{{end}}
 {{define "file" }}timetable{{end}}
-{{define "main" }}
-    <ul class="list-group">
+{{define "headContent" }}{{end}}
+{{define "footerContent" }}{{end}}
 
-        {{ range $x, $value := .w }}
+{{define "main" }}
+<h4>{{.station.Station.Name}}</h4>
+   <ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Arrival</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Departure</button>
+  </li>
+  </ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+        <ul class="list-group">
+        {{ range $x, $value := .arrival }}
             <li class="list-group-item
             {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
                 list-group-item-success
@@ -41,16 +54,85 @@
                                 <use href="#icon-train-{{$value.FullType|toIconName}}"/>
                             </svg>
                         </div>
+                       <div class="">
                         {{$value.Arrive | loctime}}
                         {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
-                            (+ {{$value.HavarianInfok.AktualisKeses}} perc )
+                            <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc )</small>
                         {{end}}
+                        </div>
 
-
-                        {{ $value|getTrainName }} ({{$value.StartStation.Name}}  <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}} )
+                       <div class="d-flex mx-1"> {{ $value|getTrainName }} 
+                       <div class="d-md-block d-none ms-1">({{$value.StartStation.Name}}  <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})</div>
+                       <div class="d-flex d-md-none" style="
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    justify-content: flex-start;
+"> <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
+                       </div>
                     </div>
                 </a>
             </li>
         {{ end }}
     </ul>
+  </div>
+  <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+        <ul class="list-group">
+        {{ range $x, $value := .departure }}
+            <li class="list-group-item
+            {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
+                list-group-item-success
+            {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
+                list-group-item-warning
+            {{else  if (delayInRange $value.HavarianInfok.AktualisKeses 3.0 999.0)}}
+                list-group-item-danger
+            {{end}}
+">
+                <a href="/train/{{$value.TrainID}}" class="text-decoration-none">
+                    <div class="d-flex" style="
+                            padding: 2px 5px;
+                            border-radius: 4px;
+                            color: #{{$value.Kind.BackgrouColorCode}};
+                            ">
+                        <div class="align-items-center d-flex flex-shrink-0 justify-content-center" style="
+                                margin: 2px;
+                                border-radius: 3px;
+                                padding: 5px;
+                                margin-right:1ch;
+                                width: 4ch;
+                        {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
+                            fill: #{{$value.ViszonylatiJel.FontSzinKod}};
+                            border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+                            background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
+                        {{else}}
+                            fill: #{{$value.Kind.ForegroundColorCode}};
+                            border: 1px solid #{{$value.Kind.BackgrouColorCode}};
+                            background-color:#{{$value.Kind.BackgrouColorCode}}
+                        {{end}}
+
+
+                                ">
+                            <svg style="height: 12px; width:24px; ">
+                                <use href="#icon-train-{{$value.FullType|toIconName}}"/>
+                            </svg>
+                        </div>
+                         <div > {{$value.Arrive | loctime}}
+                        {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
+                            <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc )</small>
+                        {{end}}
+                        </div>
+
+                       <div class="ms-1"> {{ $value|getTrainName }} ({{$value.StartStation.Name}}  <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}} )</div>
+                    </div>
+                </a>
+            </li>
+        {{ end }}
+    </ul>
+  </div>
+</div>
 {{end}}
+
+
+ 

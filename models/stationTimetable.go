@@ -2,7 +2,13 @@ package models
 
 import "time"
 
+type Scheduler interface {
+	GetName() *string
+	GetFullShortType() string
+	GetCode() string
+}
 type STT_ArrivalScheduler struct {
+	Scheduler
 	AggregatedServiceIds        []interface{} `json:"aggregatedServiceIds"`
 	Name                        *string       `json:"name"`
 	SeatReservationCode         string        `json:"seatReservationCode"`
@@ -216,9 +222,21 @@ type STT_ArrivalScheduler struct {
 	ArriveTimeZone string      `json:"arriveTimeZone"`
 	TrainID        string      `json:"trainId"`
 }
+
+func (sch STT_ArrivalScheduler) GetName() *string {
+	return sch.Name
+}
+func (sch STT_ArrivalScheduler) GetFullShortType() string {
+	return sch.FullType
+
+}
+func (sch STT_ArrivalScheduler) GetCode() string {
+	return sch.Code
+}
+
 type STT_DepartureScheduler struct {
 	AggregatedServiceIds        []interface{} `json:"aggregatedServiceIds"`
-	Name                        interface{}   `json:"name"`
+	Name                        *string       `json:"name"`
 	SeatReservationCode         string        `json:"seatReservationCode"`
 	Code                        string        `json:"code"`
 	CompanyCode                 interface{}   `json:"companyCode"`
@@ -430,6 +448,17 @@ type STT_DepartureScheduler struct {
 	ArriveTimeZone interface{} `json:"arriveTimeZone"`
 	TrainID        string      `json:"trainId"`
 }
+
+func (sch STT_DepartureScheduler) GetName() *string {
+	return sch.Name
+}
+func (sch STT_DepartureScheduler) GetFullShortType() string {
+	return sch.FullType
+}
+func (sch STT_DepartureScheduler) GetCode() string {
+	return sch.Code
+}
+
 type StationTimeTable struct {
 	TrainSchedulerDetails   interface{} `json:"trainSchedulerDetails"`
 	StationSchedulerDetails struct {
