@@ -43,7 +43,37 @@
         </div>
     {{end}}
     <div class="d-inline-block row">
-        <h3>{{.info.Train.FullName}} </h3>
+                      <div class="d-flex">
+                        <div class="d-flex" style="
+                            padding: 2px 5px;
+                            border-radius: 4px;
+                            color: #{{.info.Train.Kind.BackgrouColorCode}};
+                            ">
+                        <div class="align-items-center d-flex flex-shrink-0 justify-content-center" style="
+                                margin: 2px;
+                                border-radius: 3px;
+                                padding: 5px;
+                                margin-right:1ch;
+                                width: 4ch;
+                        {{if ne .info.Train.ViszonylatiJel.FontSzinKod  ""}}
+                            fill: #{{.info.Train.ViszonylatiJel.FontSzinKod}};
+                            border: 1px solid #{{.info.Train.ViszonylatiJel.FontSzinKod}};
+                            background-color:#{{.info.Train.ViszonylatiJel.HatterSzinKod}}
+                        {{else}}
+                            fill: #{{.info.Train.Kind.ForegroundColorCode}};
+                            border: 1px solid #{{.info.Train.Kind.BackgrouColorCode}};
+                            background-color:#{{.info.Train.Kind.BackgrouColorCode}}
+                        {{end}}
+
+
+                                ">
+                            <svg style="height: 12px; width:24px; ">
+                                <use href="/public/assets/trainclasses.svg#icon-train-{{.info.Train.FullType|toIconName}}"/>
+                            </svg>
+                        </div>
+                        </div>
+                        <h3 class="d-inline-block">{{.info.Train.FullName}} </h3>
+                        </div>
         <h4>{{.info.Train.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{.info.Train.EndStation.Name}}</h4>
     </div>
     {{ if .info.Train.HavarianInfok.AktualisKeses}}
@@ -111,7 +141,7 @@
                         </div>
 
                     </div>
-                    <div class="col">
+                    <div class="align-items-center col d-flex">
                        
                        <a href="/station/{{$value.Station.Code}}" class="text-decoration-none">
                        <strong>{{$value.Station.Name}}{{if ne $value.Station.CoutryIso "HU"}}, {{$value.Station.Country}}{{end}}

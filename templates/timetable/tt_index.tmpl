@@ -51,26 +51,21 @@
 
                                 ">
                             <svg style="height: 12px; width:24px; ">
-                                <use href="#icon-train-{{$value.FullType|toIconName}}"/>
+                                <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
                             </svg>
                         </div>
-                       <div class="">
+                       
+
+                       <div class="d-flex gap-1">
+                       <div class="d-flex flex-column flex-nowrap justify-content-center">
                         {{$value.Arrive | loctime}}
                         {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
                             <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc )</small>
                         {{end}}
                         </div>
-
-                       <div class="d-flex mx-1"> {{ $value|getTrainName }} 
+                       <div class="d-flex flex-column flex-nowrap justify-content-center"> {{ $value|getTrainName }}</div> 
                        <div class="d-md-block d-none ms-1">({{$value.StartStation.Name}}  <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})</div>
-                       <div class="d-flex d-md-none" style="
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    justify-content: flex-start;
-"> <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
+                       <div class="align-items-center d-flex d-md-none flex-row justify-content-center"> <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
                        </div>
                     </div>
                 </a>
@@ -115,7 +110,7 @@
 
                                 ">
                             <svg style="height: 12px; width:24px; ">
-                                <use href="#icon-train-{{$value.FullType|toIconName}}"/>
+                                <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
                             </svg>
                         </div>
                          <div > {{$value.Arrive | loctime}}
