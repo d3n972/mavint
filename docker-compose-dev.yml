@@ -6,8 +6,8 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
       PGDATA: /data/postgres
-    volumes:
-       - postgres:/data/postgres
+    ports:
+      - "5432:5432"
     restart: unless-stopped
   cache:
     image: redis:alpine
@@ -26,8 +26,3 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "12701:80"
-  app:
-    image: ghcr.io/d3n972/mavint:main
-    restart: unless-stopped
-    ports:
-      - 12700:12700
