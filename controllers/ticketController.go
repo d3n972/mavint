@@ -49,7 +49,7 @@ func (t *TicketController) apiCall() {
 		IsTravelEndTime:            false,
 		Offerkind:                  "1",
 		Passangers: []Passangers{
-			Passangers{
+			{
 				PassengerCount:        1,
 				PassengerID:           0,
 				CustomerTypeKey:       "HU_44_026-065",

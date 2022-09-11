@@ -19,10 +19,10 @@
     }
   ],
   "start_url": "/?source=pwa",
-  "background_color": "#3367D6",
+  "background_color": "#00EDAE",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#3367D6",
+  "theme_color": "#00EDAE",
   "shortcuts": [
     {
       "name": "MÁV train check",

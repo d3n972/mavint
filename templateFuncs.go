@@ -74,9 +74,9 @@ func GetFuncMap() template.FuncMap {
 				return "gyorsvonat"
 			case "intercity":
 				return "intercity"
-			case "interregio":
+			case "interrégió":
 				return "interregio"
-			case "railjet":
+			case "railjet xpress":
 				return "railjet"
 			case "sebesvonat":
 				return "sebesvonat"
@@ -109,11 +109,26 @@ func GetFuncMap() template.FuncMap {
 			return ""
 		},
 		"getTrainName": func(x any) string {
-			if x.(models.Scheduler).GetName() == nil {
-				fmt.Printf("Code: %s, FType: %s\n", x.(models.Scheduler).GetCode(), x.(models.Scheduler).GetFullShortType())
-				return x.(models.Scheduler).GetCode() + " " + x.(models.Scheduler).GetFullShortType()
+
+			if x.(models.Scheduler).GetFullShortType() == "InterCity" {
+				return "IC" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
 			}
-			return x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName() + " " + x.(models.Scheduler).GetFullShortType()
+			if x.(models.Scheduler).GetFullShortType() == "InterRégió" {
+				return "IR" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			}
+			if x.(models.Scheduler).GetFullShortType() == "railjet xpress" {
+				return "RJX" + x.(models.Scheduler).GetCode()
+			}
+			if x.(models.Scheduler).GetFullShortType() == "EuroCity" {
+				return "EC" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			}
+			if x.(models.Scheduler).GetFullShortType() == "EuroNight" {
+				return "EN" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			}
+			if x.(models.Scheduler).GetFullShortType() == "szeméyvonat" {
+				return x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			}
+			return x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
 		},
 	}
 

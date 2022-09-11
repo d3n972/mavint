@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GoLinterSettings">
+    <option name="enabledLinters">
+      <list>
+        <option value="durationcheck" />
+        <option value="staticcheck" />
+        <option value="govet" />
+        <option value="gomnd" />
+        <option value="gofumpt" />
+        <option value="errchkjson" />
+        <option value="typecheck" />
+        <option value="errcheck" />
+        <option value="dogsled" />
+        <option value="ineffassign" />
+        <option value="goheader" />
+        <option value="gosec" />
+        <option value="unused" />
+        <option value="gofmt" />
+        <option value="gosimple" />
+        <option value="goprintffuncname" />
+      </list>
+    </option>
+    <option name="goLinterExe" value="$PROJECT_DIR$/../.local/bin/golangci-lint" />
+    <option name="linterSelected" value="true" />
+  </component>
+</project>

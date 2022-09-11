@@ -61,7 +61,7 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 	req.Header.Set("Cache-Control", "no-cache")
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Content-Type", "application/json; charset=UTF-8")
-	req.Header.Set("Language", "en")
+	req.Header.Set("Language", "hu")
 	req.Header.Set("Origin", "https://jegy.mav.hu")
 	req.Header.Set("Pragma", "no-cache")
 	req.Header.Set("Referer", "https://jegy.mav.hu/")

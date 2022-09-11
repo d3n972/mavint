@@ -2,6 +2,8 @@ package models
 
 import "time"
 
+var emptyStr string
+
 type Scheduler interface {
 	GetName() *string
 	GetFullShortType() string
@@ -224,7 +226,11 @@ type STT_ArrivalScheduler struct {
 }
 
 func (sch STT_ArrivalScheduler) GetName() *string {
-	return sch.Name
+	emptyStr = ""
+	if sch.Name != nil {
+		return sch.Name
+	}
+	return &emptyStr
 }
 func (sch STT_ArrivalScheduler) GetFullShortType() string {
 	return sch.FullType

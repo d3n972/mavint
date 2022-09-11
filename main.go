@@ -35,6 +35,9 @@ func main() {
 	tdCtrl := controllers.TrainDetailsController{}
 	ticketCtrl := controllers.TicketController{}
 	mapController := controllers.MapController{}
+	emigController := controllers.EmigController{}
+	r.GET("/emig", emigController.Render)
+	r.GET("/getdata/emig", emigController.GetTrainEngines)
 	r.GET("/tt", ttblCtrl.Render)
 	r.GET("/station/:station_code", ttblCtrl.Render)
 	r.GET("/m", tdCtrl.Render)
