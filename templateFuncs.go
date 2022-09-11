@@ -18,7 +18,7 @@ func GetFuncMap() template.FuncMap {
 				delta := t2.Sub(t1)
 				if delta.Minutes() > 0 {
 					strDelay := time.Time{}.Add(delta).Format("15 óra 04 perc")
-					return "Késés: " + strings.Replace(strDelay, "00 óra ", "", -1)
+					return "+" + strings.Replace(strDelay, "00 óra ", "", -1)
 				}
 			}
 			return ""
