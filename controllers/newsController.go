@@ -2,10 +2,13 @@ package controllers
 
 import (
 	"encoding/xml"
+	"github.com/PuerkitoBio/goquery"
 	"github.com/d3n972/mavint/models"
 	"github.com/gin-gonic/gin"
 	"io"
+	"log"
 	"net/http"
+	"strings"
 )
 
 type NewsController struct{}
@@ -46,5 +49,27 @@ func (n *NewsController) Render(ctx *gin.Context) {
 	rss := n.apiGetData()
 	ctx.HTML(http.StatusOK, "pages/news", gin.H{
 		"news": rss,
+	})
+}
+func (n *NewsController) RenderArticle(ctx *gin.Context) {
+	webPage := "https://www.mavcsoport.hu/print/" + ctx.Query("id") //ex: 109917
+	resp, err := http.Get(webPage)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	title := doc.Find("title").Text()
+	content := doc.Find(".content").Text()
+
+	ctx.HTML(http.StatusOK, "pages/article", gin.H{
+		"title":   title,
+		"content": strings.Split(content, "\n"),
 	})
 }

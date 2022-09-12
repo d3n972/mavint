@@ -44,6 +44,7 @@ func main() {
 	r.GET("/station_select", ttblCtrl.RenderSelectorPage)
 	r.GET("/m", tdCtrl.Render)
 	r.GET("/news", newsController.Render)
+	r.GET("/article", newsController.RenderArticle)
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "pages/index", gin.H{})

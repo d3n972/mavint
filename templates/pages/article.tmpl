@@ -1,0 +1,10 @@
+{{define "title"}}Home{{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent"}}{{end}}
+{{define "footerContent"}}{{end}}
+{{define "main"}}
+    <h3>{{.title}}</h3>
+    {{range $x,$l := .content}}
+        <p>{{$l}}</p>
+    {{end}}
+{{end}}

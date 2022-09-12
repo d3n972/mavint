@@ -6,7 +6,7 @@
     <ul class="" id="accordionFlushExample">
         {{range $x,$item:=.news.Channel.Item}}
             <li>
-                <a target="_blank" href="{{$item.Link|toPrintPage}}">{{$item.Title}}</a>
+                <a href="/article?id={{$item.Link|toPrintPage}}">{{$item.Title}}</a>
             </li>
         {{end}}
 
