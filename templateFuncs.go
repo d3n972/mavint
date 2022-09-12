@@ -23,6 +23,9 @@ func GetFuncMap() template.FuncMap {
 			}
 			return ""
 		},
+		"toPrintPage": func(url string) string {
+			return strings.Replace(url, "node", "print", 1)
+		},
 		"delayInRange": func(a float64, b float64, c float64) bool {
 			fmt.Printf("float64[a, b, c]: %v\n", []float64{a, b, c})
 			if a < 0 {

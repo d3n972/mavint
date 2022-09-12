@@ -11,7 +11,7 @@ import (
 )
 
 //go:embed assets/*
-var assets embed.FS
+var Assets embed.FS
 
 //go:embed public/*
 var pwaManifest embed.FS
@@ -29,18 +29,22 @@ func main() {
 		Delims:       goview.Delims{Left: "{{", Right: "}}"},
 	})
 
-	r.StaticFS("/public", http.FS(assets))
+	r.StaticFS("/public", http.FS(Assets))
 	r.StaticFS("/app", http.FS(pwaManifest))
 	ttblCtrl := controllers.TimetableController{}
 	tdCtrl := controllers.TrainDetailsController{}
 	ticketCtrl := controllers.TicketController{}
 	mapController := controllers.MapController{}
 	emigController := controllers.EmigController{}
+	newsController := controllers.NewsController{}
 	r.GET("/emig", emigController.Render)
 	r.GET("/getdata/emig", emigController.GetTrainEngines)
 	r.GET("/tt", ttblCtrl.Render)
 	r.GET("/station/:station_code", ttblCtrl.Render)
+	r.GET("/station_select", ttblCtrl.RenderSelectorPage)
 	r.GET("/m", tdCtrl.Render)
+	r.GET("/news", newsController.Render)
+
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "pages/index", gin.H{})
 	})

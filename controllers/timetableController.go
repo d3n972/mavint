@@ -79,3 +79,6 @@ func (tt *TimetableController) Render(ctx *gin.Context) {
 		"departure": inst.StationSchedulerDetails.DepartureScheduler,
 	})
 }
+func (tt *TimetableController) RenderSelectorPage(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "timetable/station_selector", gin.H{})
+}

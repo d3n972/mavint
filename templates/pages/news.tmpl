@@ -1,0 +1,15 @@
+{{define "title"}}Home{{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent"}}{{end}}
+{{define "footerContent"}}{{end}}
+{{define "main"}}
+    <ul class="" id="accordionFlushExample">
+        {{range $x,$item:=.news.Channel.Item}}
+            <li>
+                <a target="_blank" href="{{$item.Link|toPrintPage}}">{{$item.Title}}</a>
+            </li>
+        {{end}}
+
+    </ul>
+
+{{end}}
