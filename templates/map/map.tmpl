@@ -49,11 +49,11 @@ html, body, .container /*, and all other map parent selectors*/ {
                     r.Train.forEach(e=>{
                         let iconStyle="green"
 
-                        if(e['@Delay']>6){
+                        if(e['@Delay']>15){
                             iconStyle="red"
-                        }else if(e['@Delay']>4&&e['@Delay']<6){
+                        }else if(e['@Delay']>5&&e['@Delay']<10){
                             iconStyle="orange"
-                        }else if(e['@Delay']>1&&e['@Delay']<4){
+                        }else if(e['@Delay']>2&&e['@Delay']<5){
                             iconStyle="yellow"
                         }else{
                             iconStyle="green"
