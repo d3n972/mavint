@@ -66,10 +66,11 @@ func (n *NewsController) RenderArticle(ctx *gin.Context) {
 	}
 
 	title := doc.Find("title").Text()
-	content := doc.Find(".content").Text()
-
+	publication := doc.Find(".node-date").Text()
+	content := doc.Find(".field-body").Text()
 	ctx.HTML(http.StatusOK, "pages/article", gin.H{
 		"title":   title,
+		"pub":     publication,
 		"content": strings.Split(content, "\n"),
 	})
 }
