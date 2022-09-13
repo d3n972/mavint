@@ -1,10 +1,14 @@
 package controllers
 
 import (
+	"context"
+	"encoding/json"
 	"encoding/xml"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/d3n972/mavint/models"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v9"
 	"io"
 	"log"
 	"net/http"
@@ -12,6 +16,8 @@ import (
 )
 
 type NewsController struct{}
+
+var bgCtx = context.Background()
 
 func (n *NewsController) apiGetData() *models.RssFeed {
 	req, err := http.NewRequest("GET", "https://www.mavcsoport.hu/mavinform/rss.xml", nil)
@@ -52,25 +58,45 @@ func (n *NewsController) Render(ctx *gin.Context) {
 	})
 }
 func (n *NewsController) RenderArticle(ctx *gin.Context) {
-	webPage := "https://www.mavcsoport.hu/print/" + ctx.Query("id") //ex: 109917
-	resp, err := http.Get(webPage)
-	if err != nil {
-		log.Fatal(err)
+	type aricle struct {
+		Title       string `json:"title"`
+		Publication string `json:"publication"`
+		Content     string `json:"content"`
 	}
+	hRdb, _ := ctx.Get("cache")
+	rdb := hRdb.(*redis.Client)
+	if ok := rdb.Get(bgCtx, "article:"+ctx.Query("id")); ok.Err() == redis.Nil {
 
-	defer resp.Body.Close()
-	doc, err := goquery.NewDocumentFromReader(resp.Body)
+		webPage := "https://www.mavcsoport.hu/print/" + ctx.Query("id") //ex: 109917
+		resp, err := http.Get(webPage)
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	if err != nil {
-		log.Fatal(err)
+		defer resp.Body.Close()
+		doc, err := goquery.NewDocumentFromReader(resp.Body)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		title := doc.Find("title").Text()
+		publication := doc.Find(".node-date").Text()
+		content := doc.Find(".field-body").Text()
+		art := aricle{
+			Title:       title,
+			Publication: publication,
+			Content:     content,
+		}
+		jsonArticle, _ := json.Marshal(art)
+		rdb.Set(bgCtx, "article:"+ctx.Query("id"), jsonArticle, 0)
+		fmt.Printf("Caching article: %s\n", ctx.Query("id"))
 	}
-
-	title := doc.Find("title").Text()
-	publication := doc.Find(".node-date").Text()
-	content := doc.Find(".field-body").Text()
+	seralizedArticle, _ := rdb.Get(bgCtx, "article:"+ctx.Query("id")).Bytes()
+	art := aricle{}
+	json.Unmarshal(seralizedArticle, &art)
 	ctx.HTML(http.StatusOK, "pages/article", gin.H{
-		"title":   title,
-		"pub":     publication,
-		"content": strings.Split(content, "\n"),
+		"title":   art.Title,
+		"pub":     art.Publication,
+		"content": strings.Split(art.Content, "\n"),
 	})
 }

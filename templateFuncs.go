@@ -28,7 +28,7 @@ func GetFuncMap() template.FuncMap {
 			return parts[len(parts)-1]
 		},
 		"delayInRange": func(a float64, b float64, c float64) bool {
-			fmt.Printf("float64[a, b, c]: %v\n", []float64{a, b, c})
+			//fmt.Printf("float64[a, b, c]: %v\n", []float64{a, b, c})
 			if a < 0 {
 				return true
 			}

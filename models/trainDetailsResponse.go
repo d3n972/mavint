@@ -219,20 +219,31 @@ type TS_TrainSchedDetails struct {
 					CoutryIso                     string `json:"coutryIso"`
 					IsIn1081                      bool   `json:"isIn108_1"`
 				} `json:"endStation"`
-				StartDate               interface{}   `json:"startDate"`
-				OrigStartStation        interface{}   `json:"origStartStation"`
-				OrigEndStation          interface{}   `json:"origEndStation"`
-				Start                   time.Time     `json:"start"`
-				VirtualStart            bool          `json:"virtualStart"`
-				Arrive                  time.Time     `json:"arrive"`
-				VirtualArrive           bool          `json:"virtualArrive"`
-				Distance                float64       `json:"distance"`
-				ClosedTrackway          bool          `json:"closedTrackway"`
-				FullName                string        `json:"fullName"`
-				FullNameAndType         string        `json:"fullNameAndType"`
-				Kinds                   interface{}   `json:"kinds"`
-				KindsToDisplay          interface{}   `json:"kindsToDisplay"`
-				Kind                    interface{}   `json:"kind"`
+				StartDate        interface{} `json:"startDate"`
+				OrigStartStation interface{} `json:"origStartStation"`
+				OrigEndStation   interface{} `json:"origEndStation"`
+				Start            time.Time   `json:"start"`
+				VirtualStart     bool        `json:"virtualStart"`
+				Arrive           time.Time   `json:"arrive"`
+				VirtualArrive    bool        `json:"virtualArrive"`
+				Distance         float64     `json:"distance"`
+				ClosedTrackway   bool        `json:"closedTrackway"`
+				FullName         string      `json:"fullName"`
+				FullNameAndType  string      `json:"fullNameAndType"`
+				Kinds            interface{} `json:"kinds"`
+				KindsToDisplay   interface{} `json:"kindsToDisplay"`
+				Kind             struct {
+					Name                string `json:"name"`
+					SortName            string `json:"sortName"`
+					Code                string `json:"code"`
+					Priority            int    `json:"priority"`
+					BackgrouColorCode   string `json:"backgroundColorCode"`
+					ForegroundColorCode string `json:"foregroundColorCode"`
+					Sign                struct {
+						FontName  interface{} `json:"fontName"`
+						Character interface{} `json:"character"`
+					} `json:"sign"`
+				} `json:"kind"`
 				Services                []interface{} `json:"services"`
 				ActualOrEstimatedStart  time.Time     `json:"actualOrEstimatedStart"`
 				ActualOrEstimatedArrive time.Time     `json:"actualOrEstimatedArrive"`
@@ -247,8 +258,17 @@ type TS_TrainSchedDetails struct {
 				FullNameAndPiktogram    struct {
 					Collection string `json:"(Collection)"`
 				} `json:"fullNameAndPiktogram"`
-				Footer           interface{} `json:"footer"`
-				ViszonylatiJel   interface{} `json:"viszonylatiJel"`
+				Footer         interface{} `json:"footer"`
+				ViszonylatiJel struct {
+					PiktogramFullName interface{} `json:"piktogramFullName"`
+					FontSzinKod       string      `json:"fontSzinKod"`
+					HatterSzinKod     string      `json:"hatterSzinKod"`
+					Jel               string      `json:"jel"`
+					Sign              struct {
+						Character string `json:"character"`
+						FontName  string `json:"fontName"`
+					} `json:"sign"`
+				} `json:"viszonylatiJel"`
 				ViszonylatObject interface{} `json:"viszonylatObject"`
 				Description      interface{} `json:"description"`
 				SameCar          bool        `json:"sameCar"`

@@ -3,14 +3,15 @@ package main
 import (
 	"embed"
 	"fmt"
-	"net/http"
-	"reflect"
-	"strings"
-
 	"github.com/d3n972/mavint/controllers"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"reflect"
+	"strings"
+
+	redis "github.com/go-redis/redis/v9"
 )
 
 //go:embed assets/*
@@ -45,10 +46,19 @@ func globalRecover(c *gin.Context) {
 }
 
 func main() {
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "cache:6379",
+		Password: "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", // no password set
+		DB:       0,                                  // use default DB
+	})
 	r := gin.Default()
 	r.TrustedPlatform = gin.PlatformCloudflare
 	r.Use(gin.Logger())
-	r.Use(globalRecover)
+	//r.Use(globalRecover)
+	r.Use(func(ctx *gin.Context) {
+
+		ctx.Set("cache", rdb)
+	})
 	r.HTMLRender = ginview.New(goview.Config{
 		Root:         "templates",
 		Extension:    ".tmpl",

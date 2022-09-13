@@ -2,7 +2,9 @@
 {{define "file" }}timetable{{end}}
 {{define "headContent" }}
     <style>
-        [data-href] { cursor: pointer; }
+        [data-href] {
+            cursor: pointer;
+        }
     </style>
 {{end}}
 {{define "footerContent" }}
@@ -35,8 +37,8 @@
                     <tbody>
                     {{ range $x, $value := .arrival }}
 
-                            <tr
-                                    class="
+                        <tr
+                                class="
     {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
                 table-success
             {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
@@ -47,85 +49,19 @@
 
 ">
 
-                                    <td>
-                                    <div class="d-flex" style="
-                                            padding: 2px 5px;
-                                            border-radius: 4px;
-                                            color: #{{$value.Kind.BackgrouColorCode}};
-                                            ">
-                                        <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
-                                             style="
-                                margin: 2px;
-                                max-height: 3ch;
-                                border-radius: 3px;
-                                padding: 5px;
-                                margin-right:1ch;
-                                width: 4ch;
-                        {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
-                            fill: #{{$value.ViszonylatiJel.FontSzinKod}};
-                            border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
-                            background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
-                        {{else}}
-                            fill: #{{$value.Kind.ForegroundColorCode}};
-                            border: 1px solid #{{$value.Kind.BackgrouColorCode}};
-                            background-color:#{{$value.Kind.BackgrouColorCode}}
-                        {{end}}">
-                                            <svg style="height: 12px; width:24px; ">
-                                                <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    {{$value.Arrive | loctime}}
-                                    {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
-                                        <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc
-                                            )</small>
-                                    {{end}}
-                                </td>
-                                <td>
-                                    <a href="/train/{{$value.TrainID}}" > {{ $value|getTrainName }}</a>
-                                </td>
-                                <td>
-                                    <div>
-                                        <div class="d-md-block d-none ms-1">({{$value.StartStation.Name}}
-                                            <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})
-                                        </div>
-                                        <div class="align-items-center d-flex d-md-none flex-row justify-content-center">
-                                            <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
-                                    </div>
-                                </td>
-
-                            </tr>
-
-                    {{ end }}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-        <div class="table-responsive">
-            <table class="table table-sm table-borderless">
-
-                {{ range $x, $value := .departure}}
-
-                        <tr class="
-    {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
-                table-success
-            {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
-              table-warning
-            {{else  if (delayInRange $value.HavarianInfok.AktualisKeses 3.0 999.0)}}
-               table-danger
-            {{end}}
-
-">
                             <td>
                                 <div class="d-flex" style="
                                         padding: 2px 5px;
                                         border-radius: 4px;
                                         color: #{{$value.Kind.BackgrouColorCode}};
                                         ">
+                                    {{if $value.ViszonylatiJel.Sign.Character}}
+                                    <span style="font-family: MNR;font-size:2.5ch;
+                                            color: #{{$value.ViszonylatiJel.FontSzinKod}};
+                                            ">
+                                        {{$value.ViszonylatiJel.Sign.Character}}
+                                    </span>
+                                    {{else}}
                                     <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
                                          style="
                                 margin: 2px;
@@ -139,25 +75,27 @@
                             border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
                             background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
                         {{else}}
-                            fill: #{{$value.Kind.ForegroundColorCode}};
-                            border: 1px solid #{{$value.Kind.BackgrouColorCode}};
-                            background-color:#{{$value.Kind.BackgrouColorCode}}
+                            fill: #{{$value.Kind.BackgrouColorCode}};
+                            border: 1px solid #{{$value.Kind.ForegroundColorCode}};
+                            background-color:#{{$value.Kind.ForegroundColorCode}}
                         {{end}}">
+
                                         <svg style="height: 12px; width:24px; ">
                                             <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
                                         </svg>
+                                        {{end}}
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                {{$value.Start | loctime}}
+                                {{$value.Arrive | loctime}}
                                 {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
                                     <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc
                                         )</small>
                                 {{end}}
                             </td>
                             <td>
-                                {{ $value|getTrainName }}
+                                <a href="/train/{{$value.TrainID}}"> {{ $value|getTrainName }}</a>
                             </td>
                             <td>
                                 <div>
@@ -165,12 +103,85 @@
                                         <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})
                                     </div>
                                     <div class="align-items-center d-flex d-md-none flex-row justify-content-center">
-                                        <i
-                                                class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
+                                        <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
                                 </div>
                             </td>
 
                         </tr>
+
+                    {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+        <div class="table-responsive">
+            <table class="table table-sm table-borderless">
+
+                {{ range $x, $value := .departure}}
+
+                    <tr class="
+    {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
+                table-success
+            {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
+              table-warning
+            {{else  if (delayInRange $value.HavarianInfok.AktualisKeses 3.0 999.0)}}
+               table-danger
+            {{end}}
+
+">
+                        <td>
+                            <div class="d-flex" style="
+                                    padding: 2px 5px;
+                                    border-radius: 4px;
+                                    color: #{{$value.Kind.BackgrouColorCode}};
+                                    ">
+                                <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                                     style="
+                                margin: 2px;
+                                max-height: 3ch;
+                                border-radius: 3px;
+                                padding: 5px;
+                                margin-right:1ch;
+                                width: 4ch;
+                        {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
+                            fill: #{{$value.ViszonylatiJel.FontSzinKod}};
+                            border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+                            background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
+                        {{else}}
+                            fill: #{{$value.Kind.ForegroundColorCode}};
+                            border: 1px solid #{{$value.Kind.BackgrouColorCode}};
+                            background-color:#{{$value.Kind.BackgrouColorCode}}
+                        {{end}}">
+                                    <svg style="height: 12px; width:24px; ">
+                                        <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {{$value.Start | loctime}}
+                            {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
+                                <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc
+                                    )</small>
+                            {{end}}
+                        </td>
+                        <td>
+                            {{ $value|getTrainName }}
+                        </td>
+                        <td>
+                            <div>
+                                <div class="d-md-block d-none ms-1">({{$value.StartStation.Name}}
+                                    <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})
+                                </div>
+                                <div class="align-items-center d-flex d-md-none flex-row justify-content-center">
+                                    <i
+                                            class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
+                            </div>
+                        </td>
+
+                    </tr>
                     </a>
                 {{ end }}
 

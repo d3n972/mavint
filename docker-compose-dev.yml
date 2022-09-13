@@ -15,9 +15,6 @@ services:
     ports:
       - '6379:6379'
     command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    volumes: 
-      - cache:/data
-
   pgadmin:
     image: dpage/pgadmin4
     restart: always
@@ -26,3 +23,10 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
     ports:
       - "12701:80"
+  app:
+    image: golang:1
+    volumes:
+      - /home/d3n/mavint:/go/src
+    entrypoint: sleep infinity
+    ports:
+      - "12700:12700"

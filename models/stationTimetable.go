@@ -137,12 +137,13 @@ type STT_ArrivalScheduler struct {
 		SortName            string `json:"sortName"`
 		Code                string `json:"code"`
 		Priority            int    `json:"priority"`
-		BackgrouColorCode   string `json:"backgrouColorCode"`
+		BackgrouColorCode   string `json:"backgroundColorCode"`
 		ForegroundColorCode string `json:"foregroundColorCode"`
 		Sign                struct {
 			FontName  interface{} `json:"fontName"`
 			Character interface{} `json:"character"`
 		} `json:"sign"`
+
 		StartStation struct {
 			ID                            int    `json:"id"`
 			IsAlias                       bool   `json:"isAlias"`
@@ -205,6 +206,11 @@ type STT_ArrivalScheduler struct {
 		PiktogramFullName interface{} `json:"piktogramFullName"`
 		FontSzinKod       string      `json:"fontSzinKod"`
 		HatterSzinKod     string      `json:"hatterSzinKod"`
+		Jel               string      `json:"jel"`
+		Sign              struct {
+			Character string `json:"character"`
+			FontName  string `json:"fontName"`
+		} `json:"sign"`
 	} `json:"viszonylatiJel"`
 	ViszonylatObject struct {
 		StartStationCode  string      `json:"startStationCode"`
@@ -435,6 +441,7 @@ type STT_DepartureScheduler struct {
 		PiktogramFullName interface{} `json:"piktogramFullName"`
 		FontSzinKod       string      `json:"fontSzinKod"`
 		HatterSzinKod     string      `json:"hatterSzinKod"`
+		Jel               string      `json:"jel"`
 	} `json:"viszonylatiJel"`
 	ViszonylatObject struct {
 		StartStationCode  string      `json:"startStationCode"`
