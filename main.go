@@ -2,7 +2,10 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"net/http"
+	"reflect"
+	"strings"
 
 	"github.com/d3n972/mavint/controllers"
 	"github.com/foolin/goview"
@@ -16,10 +19,36 @@ var Assets embed.FS
 //go:embed public/*
 var pwaManifest embed.FS
 
+func XHR(c *gin.Context) bool {
+	return strings.ToLower(c.Request.Header.Get("X-Requested-With")) == "xmlhttprequest"
+}
+func globalRecover(c *gin.Context) {
+	defer func(c *gin.Context) {
+
+		if rec := recover(); rec != nil {
+			// that recovery also handle XHR's
+			// you need handle it
+			if XHR(c) {
+				c.JSON(http.StatusInternalServerError, gin.H{
+					"error": rec,
+				})
+			} else {
+				fmt.Printf("%+v\n", rec)
+				fmt.Printf("%+v\n", reflect.TypeOf(rec))
+				c.HTML(http.StatusOK, "500", gin.H{
+					"error": rec.(error).Error(),
+				})
+			}
+		}
+	}(c)
+	c.Next()
+}
+
 func main() {
 	r := gin.Default()
 	r.TrustedPlatform = gin.PlatformCloudflare
-
+	r.Use(gin.Logger())
+	r.Use(globalRecover)
 	r.HTMLRender = ginview.New(goview.Config{
 		Root:         "templates",
 		Extension:    ".tmpl",

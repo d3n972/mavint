@@ -456,7 +456,11 @@ type STT_DepartureScheduler struct {
 }
 
 func (sch STT_DepartureScheduler) GetName() *string {
-	return sch.Name
+	emptyStr = ""
+	if sch.Name != nil {
+		return sch.Name
+	}
+	return &emptyStr
 }
 func (sch STT_DepartureScheduler) GetFullShortType() string {
 	return sch.FullType

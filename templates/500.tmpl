@@ -1,0 +1,17 @@
+{{define "title"}}Home{{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent" }}
+
+{{end}}
+{{define "footerContent" }}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.min.js"></script>
+    <script>
+        $("table").on('click-row.bs.table', function (e, row, $element) {
+            window.location = $element.data('href');
+        });</script>
+{{end}}
+
+{{define "main" }}
+    <h3>Internal server error</h3>
+        <code>{{.error}}</code>
+{{end}}
