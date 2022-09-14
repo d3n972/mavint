@@ -52,7 +52,7 @@ func globalRecover(c *gin.Context) {
 }
 func embeddedFH(config goview.Config, tmpl string) (string, error) {
 	path := filepath.Join(config.Root, tmpl)
-	bytes, err := ui.ReadFile(path + config.Extension)
+	bytes, err := Templates.ReadFile(path + config.Extension)
 	return string(bytes), err
 }
 func main() {
