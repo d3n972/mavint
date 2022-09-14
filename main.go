@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/d3n972/mavint/controllers"
+	"github.com/d3n972/mavint/db"
 	"github.com/d3n972/mavint/scheduledTasks"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
@@ -11,6 +12,7 @@ import (
 	redis "github.com/go-redis/redis/v9"
 	"net/http"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strings"
 	"time"
@@ -30,7 +32,6 @@ func XHR(c *gin.Context) bool {
 }
 func globalRecover(c *gin.Context) {
 	defer func(c *gin.Context) {
-
 		if rec := recover(); rec != nil {
 			// that recovery also handle XHR's
 			// you need handle it
@@ -55,26 +56,35 @@ func embeddedFH(config goview.Config, tmpl string) (string, error) {
 	return string(bytes), err
 }
 func main() {
-	schedRunner := scheduledTasks.NewTaskRunner()
-	schedRunner.AddTask("test", scheduledTasks.Schedule{
-		Interval: 1 * time.Minute,
-		Handler: func() {
-			fmt.Printf("asdasd\n")
-		},
-	})
-	go func() { schedRunner.RunTask() }()
-	os.Setenv("TZ", "Europe/Budapest")
-	rdb := redis.NewClient(&redis.Options{
+	appCtx := scheduledTasks.AppContext{}
+	appCtx.Db = db.GetDbInstance()
+	appCtx.Redis = redis.NewClient(&redis.Options{
 		Addr:     "cache:6379",
 		Password: "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", // no password set
 		DB:       0,                                  // use default DB
 	})
+
+	schedRunner := scheduledTasks.NewTaskRunner()
+	schedRunner.AddTask("redisTask", scheduledTasks.GetRedisTask())
+	schedRunner.AddTask("test", scheduledTasks.Schedule{
+		Interval: 1 * time.Second,
+		Handler: func(ctx scheduledTasks.AppContext) {
+			fmt.Printf("asdasd\n")
+		},
+	})
+	go func(ctx scheduledTasks.AppContext) {
+		for schedRunner.State == true {
+			schedRunner.RunTask(ctx)
+		}
+	}(appCtx)
+	os.Setenv("TZ", "Europe/Budapest")
+
 	r := gin.Default()
 	r.TrustedPlatform = gin.PlatformCloudflare
 	r.Use(gin.Logger())
 	//r.Use(globalRecover)
 	r.Use(func(ctx *gin.Context) {
-		ctx.Set("cache", rdb)
+		ctx.Set("cache", appCtx.Redis)
 	})
 	gvEngine := ginview.New(goview.Config{
 		Root:         "templates",

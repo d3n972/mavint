@@ -28,6 +28,12 @@ services:
       - "12701:80"
   app:
     image: ghcr.io/d3n972/mavint:main
+    environment:
+      DB_HOST: "db"
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASS: ${POSTGRES_PASSWORD:-changeme}
+      DB_NAME: "postgres"
+      DB_PORT: 5432
     restart: unless-stopped
     ports:
       - 12700:12700
