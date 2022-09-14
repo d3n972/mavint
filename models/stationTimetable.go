@@ -373,7 +373,7 @@ type STT_DepartureScheduler struct {
 		SortName            string `json:"sortName"`
 		Code                string `json:"code"`
 		Priority            int    `json:"priority"`
-		BackgrouColorCode   string `json:"backgrouColorCode"`
+		BackgrouColorCode   string `json:"backgroundColorCode"`
 		ForegroundColorCode string `json:"foregroundColorCode"`
 		Sign                struct {
 			FontName  interface{} `json:"fontName"`
@@ -442,6 +442,10 @@ type STT_DepartureScheduler struct {
 		FontSzinKod       string      `json:"fontSzinKod"`
 		HatterSzinKod     string      `json:"hatterSzinKod"`
 		Jel               string      `json:"jel"`
+		Sign              struct {
+			Character string `json:"character"`
+			FontName  string `json:"fontName"`
+		} `json:"sign"`
 	} `json:"viszonylatiJel"`
 	ViszonylatObject struct {
 		StartStationCode  string      `json:"startStationCode"`

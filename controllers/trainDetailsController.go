@@ -42,7 +42,6 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 		}
 	} else {
 		cacheId = "train:" + ctx.Query("tid")
-		fmt.Println("xxx" + time.Now().Format("2006-01-02T00:00:00Z"))
 		data = Payload{
 			MaxCount:    "9999999",
 			MinCount:    "0",

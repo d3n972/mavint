@@ -4,14 +4,16 @@ import (
 	"embed"
 	"fmt"
 	"github.com/d3n972/mavint/controllers"
+	"github.com/d3n972/mavint/scheduledTasks"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
+	redis "github.com/go-redis/redis/v9"
 	"net/http"
+	"os"
 	"reflect"
 	"strings"
-
-	redis "github.com/go-redis/redis/v9"
+	"time"
 )
 
 //go:embed assets/*
@@ -46,6 +48,15 @@ func globalRecover(c *gin.Context) {
 }
 
 func main() {
+	schedRunner := scheduledTasks.NewTaskRunner()
+	schedRunner.AddTask("test", scheduledTasks.Schedule{
+		Interval: 1 * time.Minute,
+		Handler: func() {
+			fmt.Printf("asdasd\n")
+		},
+	})
+	go func() { schedRunner.RunTask() }()
+	os.Setenv("TZ", "Europe/Budapest")
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "cache:6379",
 		Password: "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", // no password set

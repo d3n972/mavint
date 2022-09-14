@@ -137,6 +137,13 @@
                                     border-radius: 4px;
                                     color: #{{$value.Kind.BackgrouColorCode}};
                                     ">
+                                {{if $value.ViszonylatiJel.Sign.Character}}
+                                <span style="font-family: MNR;font-size:2.5ch;
+                                        color: #{{$value.ViszonylatiJel.FontSzinKod}};
+                                        ">
+                                        {{$value.ViszonylatiJel.Sign.Character}}
+                                    </span>
+                                {{else}}
                                 <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
                                      style="
                                 margin: 2px;
@@ -150,13 +157,15 @@
                             border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
                             background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
                         {{else}}
-                            fill: #{{$value.Kind.ForegroundColorCode}};
-                            border: 1px solid #{{$value.Kind.BackgrouColorCode}};
-                            background-color:#{{$value.Kind.BackgrouColorCode}}
+                            fill: #{{$value.Kind.BackgrouColorCode}};
+                            border: 1px solid #{{$value.Kind.ForegroundColorCode}};
+                            background-color:#{{$value.Kind.ForegroundColorCode}}
                         {{end}}">
+
                                     <svg style="height: 12px; width:24px; ">
                                         <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
                                     </svg>
+                                    {{end}}
                                 </div>
                             </div>
                         </td>
@@ -168,7 +177,7 @@
                             {{end}}
                         </td>
                         <td>
-                            {{ $value|getTrainName }}
+                            <a href="/train/{{$value.TrainID}}"> {{ $value|getTrainName }}</a>
                         </td>
                         <td>
                             <div>

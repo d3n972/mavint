@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"strings"
 	"time"
@@ -42,7 +41,6 @@ func GetFuncMap() template.FuncMap {
 				t1 := *station.Arrive
 				t2 := station.ActualOrEstimatedArrive
 				delta := t2.Sub(t1)
-				fmt.Sprintln("delta: %d", delta)
 				return delta.Minutes()
 			}
 			return 0
@@ -58,7 +56,6 @@ func GetFuncMap() template.FuncMap {
 			if now.Hour() > 12 && t.Hour() < 6 {
 				t = t.AddDate(0, 0, 1)
 			}
-			fmt.Println(t.Format(time.RFC3339))
 			return now.After(t)
 		},
 		"getColorOrFallback": func(a *string, b *string) string {
@@ -107,6 +104,7 @@ func GetFuncMap() template.FuncMap {
 		},
 		"loctime": func(x *time.Time) string {
 			if x != nil {
+				time.LoadLocation("Europe/Budapest")
 				t := x.Local()
 				return t.Format("15:04")
 			}
