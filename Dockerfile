@@ -7,5 +7,6 @@ COPY ./ /app/
 RUN go build -o /usr/bin/appsrv ./
 
 FROM alpine
+ENV GIN_MODE=release
 COPY --from=build /usr/bin/appsrv /bin
 CMD ["/bin/appsrv"]

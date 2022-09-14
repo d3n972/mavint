@@ -19,6 +19,9 @@ import (
 //go:embed assets/*
 var Assets embed.FS
 
+//go:embed templates/*
+var Templates embed.FS
+
 //go:embed public/*
 var pwaManifest embed.FS
 
@@ -46,7 +49,11 @@ func globalRecover(c *gin.Context) {
 	}(c)
 	c.Next()
 }
-
+func embeddedFH(config goview.Config, tmpl string) (string, error) {
+	path := filepath.Join(config.Root, tmpl)
+	bytes, err := Templates.ReadFile(path + config.Extension)
+	return string(bytes), err
+}
 func main() {
 	schedRunner := scheduledTasks.NewTaskRunner()
 	schedRunner.AddTask("test", scheduledTasks.Schedule{
@@ -67,10 +74,9 @@ func main() {
 	r.Use(gin.Logger())
 	//r.Use(globalRecover)
 	r.Use(func(ctx *gin.Context) {
-
 		ctx.Set("cache", rdb)
 	})
-	r.HTMLRender = ginview.New(goview.Config{
+	gvEngine := ginview.New(goview.Config{
 		Root:         "templates",
 		Extension:    ".tmpl",
 		Master:       "layouts/master",
@@ -78,6 +84,11 @@ func main() {
 		DisableCache: true,
 		Delims:       goview.Delims{Left: "{{", Right: "}}"},
 	})
+	if os.Getenv("GIN_MODE") == "release" {
+		fmt.Println("[Running in release mode, using embedded templates]")
+		gvEngine.ViewEngine.SetFileHandler(embeddedFH)
+	}
+	r.HTMLRender = gvEngine
 
 	r.StaticFS("/public", http.FS(Assets))
 	r.StaticFS("/app", http.FS(pwaManifest))
