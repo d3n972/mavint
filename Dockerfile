@@ -8,5 +8,6 @@ RUN go build -o /usr/bin/appsrv ./
 
 FROM alpine
 ENV GIN_MODE=release
+RUN apk add tzdata
 COPY --from=build /usr/bin/appsrv /bin
 CMD ["/bin/appsrv"]

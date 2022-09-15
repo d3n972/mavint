@@ -32,7 +32,7 @@ services:
       DB_NAME: "postgres"
       DB_PORT: 5432
     volumes:
-      - /home/d3n/mavint:/go/src
+      - $PWD:/go/src
     entrypoint: sleep infinity
     ports:
       - "12700:12700"

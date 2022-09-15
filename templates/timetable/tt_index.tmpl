@@ -53,7 +53,7 @@
                                 <div class="d-flex" style="
                                         padding: 2px 5px;
                                         border-radius: 4px;
-                                        color: #{{$value.Kind.BackgrouColorCode}};
+                                        color: #{{$value.ViszonylatiJel.HatterSzinKod}};
                                         ">
                                     {{if $value.ViszonylatiJel.Sign.Character}}
                                     <span style="font-family: MNR;font-size:2.5ch;
@@ -71,9 +71,9 @@
                                 margin-right:1ch;
                                 width: 4ch;
                         {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
-                            fill: #{{$value.ViszonylatiJel.FontSzinKod}};
+                            fill: #{{$value.ViszonylatiJel.HatterSzinKod}};
                             border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
-                            background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
+                            background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
                         {{else}}
                             fill: #{{$value.Kind.BackgrouColorCode}};
                             border: 1px solid #{{$value.Kind.ForegroundColorCode}};
