@@ -240,8 +240,8 @@ type TS_TrainSchedDetails struct {
 					BackgrouColorCode   string `json:"backgroundColorCode"`
 					ForegroundColorCode string `json:"foregroundColorCode"`
 					Sign                struct {
-						FontName  interface{} `json:"fontName"`
-						Character interface{} `json:"character"`
+						FontName  string `json:"fontName"`
+						Character string `json:"character"`
 					} `json:"sign"`
 				} `json:"kind"`
 				Services                []interface{} `json:"services"`
@@ -313,8 +313,16 @@ type TS_TrainSchedDetails struct {
 		FullNameAndPiktogram struct {
 			Collection string `json:"(Collection)"`
 		} `json:"fullNameAndPiktogram"`
-		Footer           string      `json:"footer"`
-		ViszonylatiJel   interface{} `json:"viszonylatiJel"`
+		Footer         string `json:"footer"`
+		ViszonylatiJel struct {
+			FontSzinKod   string `json:"fontSzinKod"`
+			HatterSzinKod string `json:"hatterSzinKod"`
+			Jel           string `json:"jel"`
+			Sign          struct {
+				Character string `json:"character"`
+				FontName  string `json:"fontName"`
+			} `json:"sign"`
+		} `json:"viszonylatiJel"`
 		ViszonylatObject struct {
 			StartStationCode  string      `json:"startStationCode"`
 			StartTime         time.Time   `json:"startTime"`

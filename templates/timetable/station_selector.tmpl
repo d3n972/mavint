@@ -41,5 +41,8 @@
     </script>
 {{end}}
 {{define "main" }}
-    <select name="station" id="station"></select>
+    <form action="/station" method="get">
+    <select name="station_id" id="station_id"></select>
+        <input type="submit" role="button" class="btn btn-success">
+    </form>
 {{end}}

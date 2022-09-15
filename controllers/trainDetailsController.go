@@ -104,6 +104,7 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	json.Unmarshal(apiresp, &instance)
 
 	train := instance.TrainSchedulerDetails[0]
+	fmt.Printf("%s\n", train.Train.ViszonylatiJel.Jel)
 	if tid := ctx.Query("train"); tid != "" {
 		for _, detail := range instance.TrainSchedulerDetails {
 			if detail.Train.TrainID == tid {

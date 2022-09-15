@@ -44,11 +44,31 @@
     {{end}}
     <div class="d-inline-block row">
         <div class="d-flex">
-            <div class="d-flex" style="
-                    padding: 2px 5px;
-                    border-radius: 4px;
-                    color: #{{.info.Train.Kind.BackgrouColorCode}};
-                    ">
+            {{if  .info.Train.ViszonylatiJel.Jel}}
+                <div class="d-flex" style="
+                        border-radius: 4px;
+                        ">
+
+                    <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                         style="
+                                border-radius: 3px;
+                                 margin-right:1ch;
+               ">
+                         <span style="font-family: MNR;font-size:3ch;
+                                 color: #{{ .info.Train.ViszonylatiJel.FontSzinKod}};
+                                 ">
+                                        {{ .info.Train.ViszonylatiJel.Sign.Character}}
+                                    </span>
+                    </div>
+                </div>
+
+            {{else}}
+                <div class="d-flex" style="
+                        padding: 2px 5px;
+                        border-radius: 4px;
+                        color: #{{.info.Train.Kind.BackgrouColorCode}};
+                        ">
+
                     <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
                          style="
                                  margin: 2px;
@@ -56,7 +76,7 @@
                                  padding: 5px;
                                  margin-right:1ch;
                                  width: 4ch;
-                                  fill: #FFFFFF;
+                                 fill: #FFFFFF;
                                  border: 1px solid #{{.info.Train.Kind.ForegroundColorCode}};
                                  background-color:#{{.info.Train.Kind.ForegroundColorCode}}
 
@@ -66,7 +86,8 @@
                             <use href="/public/assets/trainclasses.svg#icon-train-{{.info.Train.FullType|toIconName}}"/>
                         </svg>
                     </div>
-            </div>
+                </div>
+            {{end}}
             <h3 class="my-auto">{{.info.Train.FullName}} </h3>
         </div>
         <h4>{{.info.Train.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{.info.Train.EndStation.Name}}</h4>

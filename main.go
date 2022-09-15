@@ -15,7 +15,6 @@ import (
 	"path/filepath"
 	"reflect"
 	"strings"
-	"time"
 )
 
 //go:embed assets/*
@@ -66,13 +65,6 @@ func main() {
 
 	schedRunner := scheduledTasks.NewTaskRunner()
 	schedRunner.AddTask("redisTask", scheduledTasks.GetRedisTask())
-	schedRunner.AddTask("test", scheduledTasks.Schedule{
-		Interval: 1 * time.Second,
-		Handler: func(ctx scheduledTasks.AppContext) {
-			fmt.Printf("asdasd\n")
-			panic(fmt.Errorf("asd"))
-		},
-	})
 	go func(ctx scheduledTasks.AppContext) {
 		for schedRunner.State == true {
 			schedRunner.RunTask(ctx)
@@ -113,6 +105,9 @@ func main() {
 	r.GET("/getdata/emig", emigController.GetTrainEngines)
 	r.GET("/tt", ttblCtrl.Render)
 	r.GET("/station/:station_code", ttblCtrl.Render)
+	r.GET("/station", func(ctx *gin.Context) {
+		ctx.Redirect(http.StatusMovedPermanently, "/station/00"+ctx.Query("station_id"))
+	})
 	r.GET("/station_select", ttblCtrl.RenderSelectorPage)
 	r.GET("/m", tdCtrl.Render)
 	r.GET("/news", newsController.Render)
