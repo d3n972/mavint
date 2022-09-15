@@ -110,6 +110,11 @@
         {{ range $x, $value := .info.Scheduler }}
             <li class="list-group-item
             {{if (delayInRange (timediffMins $value) 0.0 0.1)}}
+                {{if $value.ActualOrEstimatedStart}}
+                    {{if  ($value.ActualOrEstimatedStart | isTrainDeparted)}}
+                        list-group-item-success
+                    {{end}}
+                {{end}}
             {{else if (delayInRange (timediffMins $value) 0.0 2.0)}}
                 list-group-item-success
             {{else if (delayInRange (timediffMins $value) 2.0 3.0)}}
