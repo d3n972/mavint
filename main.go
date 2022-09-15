@@ -70,6 +70,7 @@ func main() {
 		Interval: 1 * time.Second,
 		Handler: func(ctx scheduledTasks.AppContext) {
 			fmt.Printf("asdasd\n")
+			panic(fmt.Errorf("asd"))
 		},
 	})
 	go func(ctx scheduledTasks.AppContext) {

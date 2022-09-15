@@ -3,6 +3,7 @@ package scheduledTasks
 import (
 	"fmt"
 	"github.com/go-redis/redis/v9"
+	"runtime/debug"
 	"time"
 )
 
@@ -29,6 +30,13 @@ func (t *TaskRunner) AddTask(name string, task Schedule) {
 	t.tasks[name] = task
 }
 func (t *TaskRunner) RunTask(ctx AppContext) {
+	defer func() {
+		if err := recover(); err != nil {
+			err := err.(error)
+			fmt.Printf("[!] Recovered from panic: %s", err.Error())
+			fmt.Printf("Trace: \n" + string(debug.Stack()))
+		}
+	}()
 	select {
 	case <-t.done:
 		t.Stop()
@@ -43,6 +51,7 @@ func (t *TaskRunner) RunTask(ctx AppContext) {
 			if tx.Before(now) {
 				fmt.Printf("Running task: %s\n", name)
 				s.Handler(ctx)
+
 				s.LastRun = now
 			}
 		}

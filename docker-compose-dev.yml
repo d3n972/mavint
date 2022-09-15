@@ -36,3 +36,12 @@ services:
     entrypoint: sleep infinity
     ports:
       - "12700:12700"
+  redis-commander:
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      REDIS_HOST: cache
+      REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    restart: always
+    ports:
+      - "8082:8081"
