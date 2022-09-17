@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"strings"
 	"time"
@@ -28,13 +29,18 @@ func GetFuncMap() template.FuncMap {
 		},
 		"delayInRange": func(a float64, b float64, c float64) bool {
 			//fmt.Printf("float64[a, b, c]: %v\n", []float64{a, b, c})
-			if a < 0 {
-				return true
-			}
+
 			if a >= b && a < c {
 				return true
 			}
 			return false
+		},
+		"getServiceIcons": func(train models.STT_ArrivalScheduler) string {
+			ics := ""
+			for _, v := range train.Services {
+				ics += fmt.Sprintf("%s ", v.Sign.Character)
+			}
+			return ics
 		},
 		"timediffMins": func(station models.TD_Scheduler) float64 {
 			if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {

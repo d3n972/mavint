@@ -2,9 +2,10 @@ package scheduledTasks
 
 import (
 	"fmt"
-	"github.com/go-redis/redis/v9"
 	"runtime/debug"
 	"time"
+
+	"github.com/go-redis/redis/v9"
 )
 
 type HandlerFunction func(ctx AppContext)
@@ -56,6 +57,13 @@ func (t *TaskRunner) RunTask(ctx AppContext) {
 			}
 		}
 	}
+}
+func (t *TaskRunner) Start(appCtx AppContext) {
+	go func(ctx AppContext) {
+		for t.State {
+			t.RunTask(ctx)
+		}
+	}(appCtx)
 }
 func (t *TaskRunner) Stop() {
 	t.done <- true

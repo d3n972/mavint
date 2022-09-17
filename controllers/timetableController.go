@@ -5,10 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/go-redis/redis/v9"
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/go-redis/redis/v9"
 
 	"github.com/d3n972/mavint/models"
 	"github.com/gin-gonic/gin"
@@ -87,7 +88,7 @@ func (tt *TimetableController) Render(ctx *gin.Context) {
 	resp := tt.callApi(ctx)
 	inst := models.StationTimeTable{}
 	json.Unmarshal(resp, &inst)
-	ctx.HTML(http.StatusOK, "timetable/tt_index", gin.H{
+	ctx.HTML(http.StatusOK, "timetable/tt_next", gin.H{
 		"station":   inst.StationSchedulerDetails,
 		"arrival":   inst.StationSchedulerDetails.ArrivalScheduler,
 		"departure": inst.StationSchedulerDetails.DepartureScheduler,

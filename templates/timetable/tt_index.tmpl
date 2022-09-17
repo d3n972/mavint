@@ -33,18 +33,18 @@
         <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
              tabindex="0">
             <div class="table-responsive">
-                <table class="table table-sm table-borderless">
-                    <tbody>
+                <table class="/*table table-sm table-borderless*/">
+                    <tbody class="d-flex flex-column">
                     {{ range $x, $value := .arrival }}
 
                         <tr
                                 class="
     {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
-                table-success
+                bg-success text-light
             {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
-              table-warning
+              bg-warning
             {{else  if (delayInRange $value.HavarianInfok.AktualisKeses 3.0 999.0)}}
-               table-danger
+               bg-danger text-light
             {{end}}
 
 ">

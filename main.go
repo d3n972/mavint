@@ -3,6 +3,12 @@ package main
 import (
 	"embed"
 	"fmt"
+	"net/http"
+	"os"
+	"path/filepath"
+	"reflect"
+	"strings"
+
 	"github.com/d3n972/mavint/controllers"
 	"github.com/d3n972/mavint/db"
 	"github.com/d3n972/mavint/scheduledTasks"
@@ -10,11 +16,6 @@ import (
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
 	redis "github.com/go-redis/redis/v9"
-	"net/http"
-	"os"
-	"path/filepath"
-	"reflect"
-	"strings"
 )
 
 //go:embed assets/*
@@ -65,11 +66,7 @@ func main() {
 
 	schedRunner := scheduledTasks.NewTaskRunner()
 	schedRunner.AddTask("redisTask", scheduledTasks.GetRedisTask())
-	go func(ctx scheduledTasks.AppContext) {
-		for schedRunner.State == true {
-			schedRunner.RunTask(ctx)
-		}
-	}(appCtx)
+	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
 
 	r := gin.Default()
