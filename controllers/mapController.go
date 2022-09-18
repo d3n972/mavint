@@ -18,11 +18,11 @@ func (m *MapController) Render(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "map/map", gin.H{})
 }
 func (m *MapController) GetData(ctx *gin.Context) {
-	x := m.apiGetTrainCoords().D.Result.Trains
+	x := m.ApiGetTrainCoords().D.Result.Trains
 	ctx.JSON(http.StatusOK, x)
 }
 
-func (m *MapController) apiGetTrainCoords() models.MapTrainsResponse {
+func (m *MapController) ApiGetTrainCoords() models.MapTrainsResponse {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}

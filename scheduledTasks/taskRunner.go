@@ -24,10 +24,10 @@ type TaskRunner struct {
 	State  bool
 	done   chan bool
 	ticker *time.Ticker
-	tasks  map[string]Schedule
+	tasks  map[string]*Schedule
 }
 
-func (t *TaskRunner) AddTask(name string, task Schedule) {
+func (t *TaskRunner) AddTask(name string, task *Schedule) {
 	t.tasks[name] = task
 }
 func (t *TaskRunner) RunTask(ctx AppContext) {
@@ -42,17 +42,20 @@ func (t *TaskRunner) RunTask(ctx AppContext) {
 	case <-t.done:
 		t.Stop()
 	case tick := <-t.ticker.C:
+		UTC, _ := time.LoadLocation("UTC")
 		_ = tick
-		fmt.Printf("tick: %d\n", tick.Unix())
 		for name, s := range t.tasks {
-			fmt.Println("Task:" + name)
 			now := time.Now()
 			tx := s.LastRun
-			tx.Add(s.Interval)
+			if s.LastRun.Equal(time.Date(1, 1, 1, 0, 0, 0, 0, UTC)) {
+				s.LastRun = time.Now()
+				tx = s.LastRun
+				s.Handler(ctx)
+			}
+			tx = tx.Add(s.Interval)
 			if tx.Before(now) {
 				fmt.Printf("Running task: %s\n", name)
 				s.Handler(ctx)
-
 				s.LastRun = now
 			}
 		}
@@ -75,7 +78,7 @@ func NewTaskRunner() *TaskRunner {
 	return &TaskRunner{
 		done:   make(chan bool),
 		ticker: time.NewTicker(10 * time.Second),
-		tasks:  map[string]Schedule{},
+		tasks:  map[string]*Schedule{},
 		State:  true,
 	}
 }

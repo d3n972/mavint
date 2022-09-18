@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v9"
@@ -17,20 +16,6 @@ import (
 )
 
 type TimetableController struct {
-}
-type tt_HavariaCache map[string]tt_havariaCacheEntry
-
-func (tt tt_HavariaCache) HasEntry(c string) bool {
-	if val, ok := tt[c]; !ok {
-		_ = val
-		return false
-	}
-
-	return true
-}
-
-type tt_havariaCacheEntry struct {
-	Time int `json:"time"`
 }
 
 func (tt *TimetableController) callApi(ctx *gin.Context) []byte {
@@ -100,28 +85,13 @@ func (tt *TimetableController) callApi(ctx *gin.Context) []byte {
 	return responseBytes
 }
 func (tt *TimetableController) Render(ctx *gin.Context) {
-	hc := tt_HavariaCache{}
+	hc := models.HavariaCache{}
 	resp := tt.callApi(ctx)
 	R, _ := ctx.Get("cache")
 	inst := models.StationTimeTable{}
 	json.Unmarshal(resp, &inst)
-	m := MapController{}
-	if R.(*redis.Client).Exists(context.TODO(), "havariaCache").Val() != 222 {
-		hc = tt_HavariaCache{}
-		trains := m.apiGetTrainCoords().D.Result.Trains.Train
-		for _, t := range trains {
-			tn := strings.Replace(t.TrainNumber, "55", "", 1)
-			hc[tn] = tt_havariaCacheEntry{Time: t.Delay}
-		}
-		b, e := json.Marshal(hc)
-		if e != nil {
-		}
-		fmt.Printf("%+v\n", string(b))
-		R.(*redis.Client).Set(context.TODO(), "havariaCache", b, 5*time.Minute)
-	} else {
-		hcb := []byte(R.(*redis.Client).Get(context.TODO(), "havariaCache").Val())
-		json.Unmarshal(hcb, &hc)
-	}
+	hcb := []byte(R.(*redis.Client).Get(context.TODO(), "havariaCache").Val())
+	json.Unmarshal(hcb, &hc)
 
 	ctx.HTML(http.StatusOK, "timetable/tt_next", gin.H{
 		"delays":    hc,

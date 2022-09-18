@@ -65,7 +65,8 @@ func main() {
 	})
 
 	schedRunner := scheduledTasks.NewTaskRunner()
-	schedRunner.AddTask("redisTask", scheduledTasks.GetRedisTask())
+	//schedRunner.AddTask("redisTask", scheduledTasks.GetRedisTask())
+	schedRunner.AddTask("havariaUpdaterTask", scheduledTasks.HavarianUpdaterTask())
 	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
 
