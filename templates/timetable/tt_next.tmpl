@@ -32,7 +32,7 @@
 <h4>{{.station.Station.Name}}</h4>
 <h6 class="mnr icon">
     {{range $y,$svc:=.station.Services}}
-        <span title="{{$svc.Description}}" onclick="alert('{{$svc.Description}}')">{{$svc.Sign.Character}}</span>
+    <span title="{{$svc.Description}}" onclick="alert('{{$svc.Description}}')">{{$svc.Sign.Character}}</span>
     {{end}}
 </h6>
 <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -55,10 +55,13 @@
                 <div class="border col p-2" onclick="document.location='/train/{{$value.TrainID}}'">
                     <div class="d-flex gap-3 text-bold">
                         <div class="">
+                            {{if $value.ActualOrEstimatedArrive}}
+                            {{$value.ActualOrEstimatedArrive | loctime}}
+                            {{else}}
                             {{$value.Arrive | loctime}}
+                            {{end}}
                             {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
-                            <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc
-                                )</small>
+                            <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} p</small>
                             {{end}}
                         </div>
                         <div>
@@ -96,181 +99,78 @@
                             </svg>
                         </div>
                         {{end}}
-                        <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName }}</span>
-                        <span class="mnr">
+                        <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName
+                            }}</span>
+                        <span class="mnr ms-3">
                             {{$value|getServiceIcons}}
                         </span>
                     </div>
                 </div>
             </div>
             {{end}}
-
-            <!--
-                <table class="/*table table-sm table-borderless*/">
-                    <tbody class="d-flex flex-column">
-                    {{ range $x, $value := .arrival }}
-
-                        <tr
-                                class="
-    {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
-                bg-success text-light
-            {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
-              bg-warning
-            {{else  if (delayInRange $value.HavarianInfok.AktualisKeses 3.0 999.0)}}
-               bg-danger text-light
-            {{end}}
-
-">
-
-                            <td>
-                                <div class="d-flex" style="
-                                        padding: 2px 5px;
-                                        border-radius: 4px;
-                                        color: #{{$value.ViszonylatiJel.HatterSzinKod}};
-                                        ">
-                                    {{if $value.ViszonylatiJel.Sign.Character}}
-                                    <span style="font-family: MNR;font-size:2.5ch;
-                                            color: #{{$value.ViszonylatiJel.FontSzinKod}};
-                                            ">
-                                        {{$value.ViszonylatiJel.Sign.Character}}
-                                    </span>
-                                    {{else}}
-                                    <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
-                                         style="
-                                margin: 2px;
-                                max-height: 3ch;
-                                border-radius: 3px;
-                                padding: 5px;
-                                margin-right:1ch;
-                                width: 4ch;
-                        {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
-                            fill: #{{$value.ViszonylatiJel.HatterSzinKod}};
-                            border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
-                            background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
-                        {{else}}
-                            fill: #{{$value.Kind.BackgrouColorCode}};
-                            border: 1px solid #{{$value.Kind.ForegroundColorCode}};
-                            background-color:#{{$value.Kind.ForegroundColorCode}}
-                        {{end}}">
-
-                                        <svg style="height: 12px; width:24px; ">
-                                            <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
-                                        </svg>
-                                        {{end}}
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                {{$value.Arrive | loctime}}
-                                {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
-                                    <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc
-                                        )</small>
-                                {{end}}
-                            </td>
-                            <td>
-                                <a href="/train/{{$value.TrainID}}"> {{ $value|getTrainName }}</a>
-                            </td>
-                            <td>
-                                <div>
-                                    <div class="d-md-block d-none ms-1">({{$value.StartStation.Name}}
-                                        <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})
-                                    </div>
-                                    <div class="align-items-center d-flex d-md-none flex-row justify-content-center">
-                                        <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
-                                </div>
-                            </td>
-
-                        </tr>
-
-                    {{ end }}
-                    </tbody>
-                </table>
-                -->
         </div>
 
     </div>
     <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-        <div class="table-responsive">
-            <table class="table table-sm table-borderless">
-
-                {{ range $x, $value := .departure}}
-
-                <tr class="
-    {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
-                table-success
-            {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
-              table-warning
-            {{else  if (delayInRange $value.HavarianInfok.AktualisKeses 3.0 999.0)}}
-               table-danger
-            {{end}}
-
-">
-                    <td>
-                        <div class="d-flex" style="
-                                        padding: 2px 5px;
-                                        border-radius: 4px;
-                                        color: #{{$value.Kind.BackgrouColorCode}};
-                                        ">
-                            {{if $value.ViszonylatiJel.Sign.Character}}
-                            <span style="font-family: MNR;font-size:2.5ch;
-                                            color: #{{$value.ViszonylatiJel.FontSzinKod}};
-                                            ">
-                                {{$value.ViszonylatiJel.Sign.Character}}
-                            </span>
+        <div class="">
+            {{ range $x, $value := .departure }}
+            <div>
+                <div class="border col p-2" onclick="document.location='/train/{{$value.TrainID}}'">
+                    <div class="d-flex gap-3 text-bold">
+                        <div class="">
+                            {{if $value.ActualOrEstimatedStart}}
+                            {{$value.ActualOrEstimatedStart | loctime}}
                             {{else}}
-                            <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
-                                style="
-                                margin: 2px;
-                                max-height: 3ch;
-                                border-radius: 3px;
-                                padding: 5px;
-                                margin-right:1ch;
-                                width: 4ch;
-                        {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
-                            fill: #{{$value.ViszonylatiJel.FontSzinKod}};
-                            border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
-                            background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
-                        {{else}}
-                            fill: #{{$value.Kind.BackgrouColorCode}};
-                            border: 1px solid #{{$value.Kind.ForegroundColorCode}};
-                            background-color:#{{$value.Kind.ForegroundColorCode}}
-                        {{end}}">
-
-                                <svg style="height: 12px; width:24px; ">
-                                    <use
-                                        href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}" />
-                                </svg>
-                                {{end}}
-                            </div>
+                            {{$value.Start | loctime}}
+                            {{end}}
+                            {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
+                            <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} p</small>
+                            {{end}}
                         </div>
-                    </td>
-                    <td>
-                        {{$value.Start | loctime}}
-                        {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
-                        <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc
-                            )</small>
-                        {{end}}
-                    </td>
-                    <td>
-                        <a href="/train/{{$value.TrainID}}"> {{ $value|getTrainName }}</a>
-                    </td>
-                    <td>
                         <div>
-                            <div class="d-md-block d-none ms-1">({{$value.StartStation.Name}}
-                                <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})
-                            </div>
-                            <div class="align-items-center d-flex d-md-none flex-row justify-content-center">
-                                <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
-                            </div>
+                            {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
                         </div>
-                    </td>
 
-                </tr>
-                </a>
-                {{ end }}
+                    </div>
 
+                    <div class="d-flex align-self-center align-items-center">
+                        {{if $value.ViszonylatiJel.Sign.Character}}
+                        <span class="align-middle icon mnr"
+                            style=" color: #{{$value.ViszonylatiJel.FontSzinKod}};">{{$value.ViszonylatiJel.Sign.Character}}</span>
 
-            </table>
+                        {{else}}
+                        <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                            style="
+                   margin: 2px;
+                   max-height: 2ch;
+                   border-radius: 3px;
+                   padding: 5px;
+                   margin-right:1ch;
+                   width: 4ch;
+           {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
+               fill: #{{$value.ViszonylatiJel.HatterSzinKod}};
+               border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+               background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
+           {{else}}
+               fill: #{{$value.Kind.BackgrouColorCode}};
+               border: 1px solid #{{$value.Kind.ForegroundColorCode}};
+               background-color:#{{$value.Kind.ForegroundColorCode}}
+           {{end}}">
+
+                            <svg style="height: 12px; width:24px; ">
+                                <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}" />
+                            </svg>
+                        </div>
+                        {{end}}
+                        <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName
+                            }}</span>
+                        <span class="mnr ms-3">
+                            {{$value|getServiceIcons}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {{end}}
         </div>
     </div>
 </div>

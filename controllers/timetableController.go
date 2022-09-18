@@ -86,8 +86,10 @@ func (tt *TimetableController) callApi(ctx *gin.Context) []byte {
 }
 func (tt *TimetableController) Render(ctx *gin.Context) {
 	resp := tt.callApi(ctx)
+	R, _ := ctx.Get("cache")
 	inst := models.StationTimeTable{}
 	json.Unmarshal(resp, &inst)
+	R = R.(*redis.Client).Set(context.TODO(), "TTBL:"+ctx.Param("station_code"), inst, 0)
 	ctx.HTML(http.StatusOK, "timetable/tt_next", gin.H{
 		"station":   inst.StationSchedulerDetails,
 		"arrival":   inst.StationSchedulerDetails.ArrivalScheduler,

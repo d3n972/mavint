@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"strings"
 	"time"
@@ -35,12 +34,8 @@ func GetFuncMap() template.FuncMap {
 			}
 			return false
 		},
-		"getServiceIcons": func(train models.STT_ArrivalScheduler) string {
-			ics := ""
-			for _, v := range train.Services {
-				ics += fmt.Sprintf("%s ", v.Sign.Character)
-			}
-			return ics
+		"getServiceIcons": func(train models.Scheduler) string {
+			return train.GetIconCharacters()
 		},
 		"timediffMins": func(station models.TD_Scheduler) float64 {
 			if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {

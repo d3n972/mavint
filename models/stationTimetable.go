@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 var emptyStr string
 
@@ -8,6 +11,7 @@ type Scheduler interface {
 	GetName() *string
 	GetFullShortType() string
 	GetCode() string
+	GetIconCharacters() string
 }
 type STT_ArrivalScheduler struct {
 	Scheduler
@@ -245,6 +249,13 @@ func (sch STT_ArrivalScheduler) GetFullShortType() string {
 func (sch STT_ArrivalScheduler) GetCode() string {
 	return sch.Code
 }
+func (sch STT_ArrivalScheduler) GetIconCharacters() string {
+	var s string
+	for _, v := range sch.Services {
+		s += fmt.Sprintf("%s ", v.Sign.Character)
+	}
+	return s
+}
 
 type STT_DepartureScheduler struct {
 	AggregatedServiceIds        []interface{} `json:"aggregatedServiceIds"`
@@ -417,8 +428,8 @@ type STT_DepartureScheduler struct {
 		} `json:"sign"`
 		TrainStopKind interface{} `json:"trainStopKind"`
 	} `json:"services"`
-	ActualOrEstimatedStart  interface{} `json:"actualOrEstimatedStart"`
-	ActualOrEstimatedArrive interface{} `json:"actualOrEstimatedArrive"`
+	ActualOrEstimatedStart  *time.Time `json:"actualOrEstimatedStart"`
+	ActualOrEstimatedArrive *time.Time `json:"actualOrEstimatedArrive"`
 	HavarianInfok           struct {
 		AktualisKeses float64     `json:"aktualisKeses"`
 		KesesiOk      interface{} `json:"kesesiOk"`
@@ -428,36 +439,36 @@ type STT_DepartureScheduler struct {
 	} `json:"havarianInfok"`
 	DirectTrains         interface{} `json:"directTrains"`
 	CarrierTrains        interface{} `json:"carrierTrains"`
-	StartTrack           interface{} `json:"startTrack"`
-	EndTrack             interface{} `json:"endTrack"`
+	StartTrack           string      `json:"startTrack"`
+	EndTrack             string      `json:"endTrack"`
 	JeEszkozAlapID       float64     `json:"jeEszkozAlapId"`
 	FullType             string      `json:"fullType"`
 	FullShortType        string      `json:"fullShortType"`
 	FullNameAndPiktogram struct {
 		Collection string `json:"(Collection)"`
 	} `json:"fullNameAndPiktogram"`
-	Footer         interface{} `json:"footer"`
+	Footer         string `json:"footer"`
 	ViszonylatiJel struct {
-		PiktogramFullName interface{} `json:"piktogramFullName"`
-		FontSzinKod       string      `json:"fontSzinKod"`
-		HatterSzinKod     string      `json:"hatterSzinKod"`
-		Jel               string      `json:"jel"`
+		PiktogramFullName string `json:"piktogramFullName"`
+		FontSzinKod       string `json:"fontSzinKod"`
+		HatterSzinKod     string `json:"hatterSzinKod"`
+		Jel               string `json:"jel"`
 		Sign              struct {
 			Character string `json:"character"`
 			FontName  string `json:"fontName"`
 		} `json:"sign"`
 	} `json:"viszonylatiJel"`
 	ViszonylatObject struct {
-		StartStationCode  string      `json:"startStationCode"`
-		StartTime         time.Time   `json:"startTime"`
-		StartTimeZone     string      `json:"startTimeZone"`
-		EndStationCode    string      `json:"endStationCode"`
-		EndTime           time.Time   `json:"endTime"`
-		EndTimeZone       string      `json:"endTimeZone"`
-		TravelTime        float64     `json:"travelTime"`
-		StartTrack        interface{} `json:"startTrack"`
-		EndTrack          interface{} `json:"endTrack"`
-		InnerStationCodes []string    `json:"innerStationCodes"`
+		StartStationCode  string    `json:"startStationCode"`
+		StartTime         time.Time `json:"startTime"`
+		StartTimeZone     string    `json:"startTimeZone"`
+		EndStationCode    string    `json:"endStationCode"`
+		EndTime           time.Time `json:"endTime"`
+		EndTimeZone       string    `json:"endTimeZone"`
+		TravelTime        float64   `json:"travelTime"`
+		StartTrack        string    `json:"startTrack"`
+		EndTrack          string    `json:"endTrack"`
+		InnerStationCodes []string  `json:"innerStationCodes"`
 	} `json:"viszonylatObject"`
 	Description    interface{} `json:"description"`
 	SameCar        bool        `json:"sameCar"`
@@ -478,6 +489,13 @@ func (sch STT_DepartureScheduler) GetFullShortType() string {
 }
 func (sch STT_DepartureScheduler) GetCode() string {
 	return sch.Code
+}
+func (sch STT_DepartureScheduler) GetIconCharacters() string {
+	var s string
+	for _, v := range sch.Services {
+		s += fmt.Sprintf("%s ", v.Sign.Character)
+	}
+	return s
 }
 
 type StationTimeTable struct {
