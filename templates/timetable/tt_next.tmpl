@@ -51,8 +51,28 @@
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
         <div class="">
+            {{$havinfo := .delays}}
             {{ range $x, $value := .arrival }}
-            <div>
+            <div style="
+            {{$idx := $value.GetCode}}
+            {{ with (index $havinfo $idx) }}
+            {{if $havinfo.HasEntry $idx}}
+             {{ if (iDelayInRange .Time 0.0 1.0) }}
+             background-color:  #68C646;
+            {{else if (iDelayInRange .Time 1.0 3.0) }}
+            background-color:  #ABCC24;
+            {{else if (iDelayInRange .Time 3.0 5.0) }}
+            background-color: #EED202;
+            {{else if (iDelayInRange .Time 5.0 8.0) }}
+            background-color: #D57f0e;
+            {{else if (iDelayInRange .Time 8.0 10.0) }}
+            background-color: #c95614;
+            {{else if (iDelayInRange .Time 10.0 555.0) }}
+            background-color:  #BC2C1A;
+            color: white;
+             {{ end }}
+             {{end}}
+             {{end}};">
                 <div class="border col p-2" onclick="document.location='/train/{{$value.TrainID}}'">
                     <div class="d-flex gap-3 text-bold">
                         <div class="">
@@ -114,8 +134,28 @@
     </div>
     <div class="tab-pane fade  show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
         <div class="">
+            {{$havinfo := .delays}}
             {{ range $x, $value := .departure }}
-            <div>
+            <div style="
+            {{$idx := $value.GetCode}}
+            {{ with (index $havinfo $idx) }}
+            {{if $havinfo.HasEntry $idx}}
+             {{ if (iDelayInRange .Time 0.0 1.0) }}
+             background-color:  #68C646;
+            {{else if (iDelayInRange .Time 1.0 3.0) }}
+            background-color:  #ABCC24;
+            {{else if (iDelayInRange .Time 3.0 5.0) }}
+            background-color: #EED202;
+            {{else if (iDelayInRange .Time 5.0 8.0) }}
+            background-color: #D57f0e;
+            {{else if (iDelayInRange .Time 8.0 15.0) }}
+            background-color: #c95614;
+            {{else if (iDelayInRange .Time 15.0 2000.0) }}
+            background-color:  #BC2C1A;
+            color: white;
+             {{ end }}
+             {{end}}
+             {{end}};">
                 <div class="border col p-2" onclick="document.location='/train/{{$value.TrainID}}'">
                     <div class="d-flex gap-3 text-bold">
                         <div class="">

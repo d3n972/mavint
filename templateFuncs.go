@@ -26,6 +26,12 @@ func GetFuncMap() template.FuncMap {
 			parts := strings.Split(url, "/")
 			return parts[len(parts)-1]
 		},
+		"iDelayInRange": func(a int, b int, c int) bool {
+			if a >= b && a < c {
+				return true
+			}
+			return false
+		},
 		"delayInRange": func(a float64, b float64, c float64) bool {
 			//fmt.Printf("float64[a, b, c]: %v\n", []float64{a, b, c})
 
