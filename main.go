@@ -209,5 +209,5 @@ func main() {
 
 	appCtx.Db.AutoMigrate(&M.WatchedTrain{})
 
-	r.Run(":12701") // listen and serve on 0.0.0.0:12700
+	r.Run(":12700") // listen and serve on 0.0.0.0:12700
 }
