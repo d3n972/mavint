@@ -67,7 +67,6 @@ func HavarianUpdaterTask() *Schedule {
 	return &Schedule{
 		Interval: 1 * time.Minute,
 		Handler: func(ctx AppContext) {
-
 			R := ctx.Redis
 			if R.Exists(context.TODO(), "havariaCache").Val() != 222 {
 				hc := models.HavariaCache{}

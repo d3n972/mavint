@@ -150,9 +150,11 @@ func main() {
 	r.TrustedPlatform = gin.PlatformCloudflare
 	r.Use(gin.Logger())
 	r.Use(globalRecover)
+
 	r.Use(func(ctx *gin.Context) {
 		ctx.Set("cache", appCtx.Redis)
 		ctx.Set("appctx", appCtx)
+		ctx.Next()
 	})
 	gvEngine := ginview.New(goview.Config{
 		Root:         "templates",
@@ -207,5 +209,5 @@ func main() {
 
 	appCtx.Db.AutoMigrate(&M.WatchedTrain{})
 
-	r.Run(":12700") // listen and serve on 0.0.0.0:12700
+	r.Run(":12701") // listen and serve on 0.0.0.0:12700
 }

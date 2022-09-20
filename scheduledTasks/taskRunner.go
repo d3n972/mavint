@@ -35,7 +35,7 @@ func (t *TaskRunner) RunTask(ctx AppContext) {
 	defer func() {
 		if err := recover(); err != nil {
 			err := err.(error)
-			fmt.Printf("[!] Recovered from panic: %s", err.Error())
+			fmt.Printf("[!] Recovered from panic: %s\n", err.Error())
 			fmt.Printf("Trace: \n" + string(debug.Stack()))
 		}
 	}()
