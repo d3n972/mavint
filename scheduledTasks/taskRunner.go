@@ -6,12 +6,13 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v9"
+	"gorm.io/gorm"
 )
 
 type HandlerFunction func(ctx AppContext)
 
 type AppContext struct {
-	Db    interface{}
+	Db    *gorm.DB
 	Redis *redis.Client
 }
 type Schedule struct {
