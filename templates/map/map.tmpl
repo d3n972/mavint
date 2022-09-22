@@ -12,7 +12,9 @@
             overflow: hidden;
             width: 100%;
         }
-
+        .vh-85{
+            height: 89vh!important;
+        }
         #map {
             /* width: auto;*/
             height: 100%;
@@ -33,6 +35,9 @@
         window.markerLayer = {}
 
         $(document).ready(_ => {
+            $("#maincontainer")[0].classList.remove("container")
+            $("#maincontainer")[0].classList.add("container-fluid")
+
             window.Lmap = L.map('map').setView([47.4979, 19.0402], 13);
 
 
@@ -103,6 +108,6 @@
 {{end}}
 
 {{define "main" }}
-    <div id="map" class="min-vh-100"></div>
+    <div id="map" class="vh-85"></div>
 
 {{end}}

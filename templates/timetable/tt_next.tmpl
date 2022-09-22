@@ -18,6 +18,9 @@
     .text-bold {
         font-weight: 700;
     }
+    .bi-chevron-right{
+        font-size: 3ch;
+    }
 </style>
 {{end}}
 {{define "footerContent" }}
@@ -53,50 +56,50 @@
         <div class="">
             {{$havinfo := .delays}}
             {{ range $x, $value := .arrival }}
-            <div style="
-            {{$idx := $value.GetCode}}
-            {{ with (index $havinfo $idx) }}
-            {{if $havinfo.HasEntry $idx}}
-             {{ if (iDelayInRange .Time 0.0 1.0) }}
-             background-color:  #68C646;
-            {{else if (iDelayInRange .Time 1.0 3.0) }}
-            background-color:  #ABCC24;
-            {{else if (iDelayInRange .Time 3.0 5.0) }}
-            background-color: #EED202;
-            {{else if (iDelayInRange .Time 5.0 8.0) }}
-            background-color: #D57f0e;
-            {{else if (iDelayInRange .Time 8.0 10.0) }}
-            background-color: #c95614;
-            {{else if (iDelayInRange .Time 10.0 555.0) }}
-            background-color:  #BC2C1A;
-            color: white;
-             {{ end }}
-             {{end}}
-             {{end}};">
-                <div class="border col p-2" onclick="document.location='/train/{{$value.TrainID}}'">
-                    <div class="d-flex gap-3 text-bold">
-                        <div class="">
-                            {{if $value.ActualOrEstimatedArrive}}
-                            {{$value.ActualOrEstimatedArrive | loctime}}
-                            {{else}}
-                            {{$value.Arrive | loctime}}
-                            {{end}}
-                            {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
-                            <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} p</small>
-                            {{end}}
-                        </div>
-                        <div>
-                            {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
-                        </div>
+                <div style="
+                {{$idx := $value.GetCode}}
+                {{ with (index $havinfo $idx) }}
+                    {{if $havinfo.HasEntry $idx}}
+                        {{ if (iDelayInRange .Time 0.0 1.0) }}
+                            background-color:  #68C646;
+                        {{else if (iDelayInRange .Time 1.0 3.0) }}
+                            background-color:  #ABCC24;
+                        {{else if (iDelayInRange .Time 3.0 5.0) }}
+                            background-color: #EED202;
+                        {{else if (iDelayInRange .Time 5.0 8.0) }}
+                            background-color: #D57f0e;
+                        {{else if (iDelayInRange .Time 8.0 15.0) }}
+                            background-color: #c95614;
+                        {{else if (iDelayInRange .Time 15.0 2000.0) }}
+                            background-color:  #BC2C1A;
+                                    color: white;
+                        {{ end }}
+                    {{end}}
+                {{end}};">
+                    <div class="border d-flex p-2" >
+                        <div class="col">
+                            <div class="d-flex gap-3 text-bold">
+                                <div class="d-flex flex-column">
+                                    {{if $value.ActualOrEstimatedArrive}}
+                                        {{$value.ActualOrEstimatedArrive | loctime}}
+                                    {{else}}
+                                        {{$value.Arrive | loctime}}
+                                    {{end}}
+                                    {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
+                                        <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} p)</small>
+                                    {{end}}
+                                </div>
+                                <div>
+                                    {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
+                                </div>
 
-                    </div>
+                            </div>
+                            <div class="d-flex align-self-center align-items-center">
+                                {{if $value.ViszonylatiJel.Sign.Character}}
+                                    <span class="align-middle icon mnr"
+                                          style=" color: #{{$value.ViszonylatiJel.FontSzinKod}};">{{$value.ViszonylatiJel.Sign.Character}}</span>
 
-                    <div class="d-flex align-self-center align-items-center">
-                        {{if $value.ViszonylatiJel.Sign.Character}}
-                        <span class="align-middle icon mnr"
-                            style=" color: #{{$value.ViszonylatiJel.FontSzinKod}};">{{$value.ViszonylatiJel.Sign.Character}}</span>
-
-                        {{else}}
+                                {{else}}
                         <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
                             style="
                    margin: 2px;
@@ -120,14 +123,18 @@
                             </svg>
                         </div>
                         {{end}}
-                        <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName
-                            }}</span>
-                        <span class="mnr ms-3">
+                                <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName
+                                    }}</span>
+                                <span class="mnr ms-3">
                             {{$value|getServiceIcons}}
                         </span>
+                            </div>
+                        </div>
+                        <div class="align-items-center col-1 d-flex me-2" onclick="ShowSpinner();document.location='/train/{{$value.TrainID}}'">
+                            <i class="bi bi-chevron-right"></i>
+                        </div>
                     </div>
                 </div>
-            </div>
             {{end}}
         </div>
 
@@ -156,30 +163,30 @@
              {{ end }}
              {{end}}
              {{end}};">
-                <div class="border col p-2" onclick="document.location='/train/{{$value.TrainID}}'">
-                    <div class="d-flex gap-3 text-bold">
-                        <div class="">
-                            {{if $value.ActualOrEstimatedStart}}
-                            {{$value.ActualOrEstimatedStart | loctime}}
+                <div class="border d-flex p-2" >
+                    <div class="col">
+                        <div class="d-flex gap-3 text-bold">
+                            <div class="d-flex flex-column">
+                                {{if $value.ActualOrEstimatedStart}}
+                                    {{$value.ActualOrEstimatedStart | loctime}}
+                                {{else}}
+                                    {{$value.Start | loctime}}
+                                {{end}}
+                                {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
+                                    <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} p)</small>
+                                {{end}}
+                            </div>
+                            <div>
+                                {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
+                            </div>
+
+                        </div>
+                        <div class="d-flex align-self-center align-items-center">
+                            {{if $value.ViszonylatiJel.Sign.Character}}
+                                <span class="align-middle icon mnr"
+                                      style=" color: #{{$value.ViszonylatiJel.FontSzinKod}};">{{$value.ViszonylatiJel.Sign.Character}}</span>
+
                             {{else}}
-                            {{$value.Start | loctime}}
-                            {{end}}
-                            {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
-                            <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} p</small>
-                            {{end}}
-                        </div>
-                        <div>
-                            {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
-                        </div>
-
-                    </div>
-
-                    <div class="d-flex align-self-center align-items-center">
-                        {{if $value.ViszonylatiJel.Sign.Character}}
-                        <span class="align-middle icon mnr"
-                            style=" color: #{{$value.ViszonylatiJel.FontSzinKod}};">{{$value.ViszonylatiJel.Sign.Character}}</span>
-
-                        {{else}}
                         <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
                             style="
                    margin: 2px;
@@ -203,11 +210,15 @@
                             </svg>
                         </div>
                         {{end}}
-                        <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName
-                            }}</span>
-                        <span class="mnr ms-3">
+                            <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName
+                                }}</span>
+                            <span class="mnr ms-3">
                             {{$value|getServiceIcons}}
                         </span>
+                        </div>
+                    </div>
+                    <div class="align-items-center col-1 d-flex me-2" onclick="ShowSpinner();document.location='/train/{{$value.TrainID}}'">
+                        <i class="bi bi-chevron-right"></i>
                     </div>
                 </div>
             </div>

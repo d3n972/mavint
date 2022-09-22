@@ -5,6 +5,7 @@ import (
 	"embed"
 	"encoding/json"
 	"fmt"
+	"github.com/d3n972/mavint/auth"
 	"io"
 	"net/http"
 	"net/url"
@@ -154,6 +155,22 @@ func main() {
 	r.Use(func(ctx *gin.Context) {
 		ctx.Set("cache", appCtx.Redis)
 		ctx.Set("appctx", appCtx)
+		ctx.Next()
+	})
+	r.Use(func(ctx *gin.Context) {
+		o := auth.Session{}
+		sessid, err := ctx.Cookie("session_id")
+		_ = sessid
+		if err == http.ErrNoCookie {
+			tok := o.GenerateSessionID()
+			ctx.SetCookie(
+				"session_id",
+				tok,
+				60*60*24,
+				"/",
+				"127.0.0.1:12700", false, true,
+			)
+		}
 		ctx.Next()
 	})
 	gvEngine := ginview.New(goview.Config{

@@ -33,7 +33,16 @@
 </head>
 
 <body>
-<header class="mb-md-4 p-3 text-bg-dark">
+<div class="bg-dark d-flex h-100 loader position-absolute text-white w-100 d-none" style="
+    z-index: 50000;
+">
+    <div class="align-self-center mx-auto">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+<header class="p-3 sticky-top text-bg-dark">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
@@ -77,8 +86,8 @@
         </div>
     </div>
 </header>
-<div class="container">
-    <main class="my-3">
+<div id="maincontainer" class="container">
+    <main class="mt-1">
         {{template "main" .}}
     </main>
 </div>
@@ -86,7 +95,20 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.min.js"></script>
+<script>
+    function ShowSpinner() {
+        if (navigator.userAgentData.mobile) {
+            $(".loader")[0].classList.remove("d-none")
+        }
+    }
+
+    $(document).ready(_ => {
+        $("a").click(e => {
+            ShowSpinner()
+        })
+    })
+</script>
 {{template "footerContent" . }}
 </body>
 

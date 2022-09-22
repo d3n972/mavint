@@ -104,7 +104,6 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	json.Unmarshal(apiresp, &instance)
 
 	train := instance.TrainSchedulerDetails[0]
-	fmt.Printf("%s\n", train.Train.ViszonylatiJel.Jel)
 	if tid := ctx.Query("train"); tid != "" {
 		for _, detail := range instance.TrainSchedulerDetails {
 			if detail.Train.TrainID == tid {
@@ -114,7 +113,7 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 		}
 	}
 
-	ctx.HTML(http.StatusOK, "traininfo/info", gin.H{
+	ctx.HTML(http.StatusOK, "traininfo/info_next", gin.H{
 		"info":            train,
 		"tid":             ctx.Query("tid"),
 		"selectedTrainID": train.Train.TrainID,
