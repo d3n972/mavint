@@ -121,3 +121,27 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 		"numberOfTrains":  len(instance.TrainSchedulerDetails),
 	})
 }
+func (c *TrainDetailsController) ESDDisplay(ctx *gin.Context) {
+	apiresp := c.getApiResponse(ctx)
+	instance := models.TrainDetailsResponse{}
+	json.Unmarshal(apiresp, &instance)
+	staytime := 0 * time.Minute
+	var train models.TS_TrainSchedDetails
+	train = instance.TrainSchedulerDetails[0]
+	for _, stop := range train.Scheduler {
+		if stop.Start != nil && stop.Arrive != nil {
+			delta := stop.Start.Sub(*stop.Arrive)
+			staytime = staytime + delta
+		}
+	}
+	stayT := time.Time{}
+	stayT = stayT.Add(staytime)
+	ctx.HTML(http.StatusOK, "pages/esd_display", gin.H{
+		"schedule": train.Scheduler,
+		"train":    train.Train,
+		"trainID":  ctx.Query("tid"),
+		"genDate":  time.Now().Local().Format("06.01.02."),
+		"genTime":  time.Now().Local().Format("15:04"),
+		"staytime": stayT,
+	})
+}

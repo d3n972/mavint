@@ -157,22 +157,7 @@ func main() {
 		ctx.Set("appctx", appCtx)
 		ctx.Next()
 	})
-	r.Use(func(ctx *gin.Context) {
-		o := auth.Session{}
-		sessid, err := ctx.Cookie("session_id")
-		_ = sessid
-		if err == http.ErrNoCookie {
-			tok := o.GenerateSessionID()
-			ctx.SetCookie(
-				"session_id",
-				tok,
-				60*60*24,
-				"/",
-				"127.0.0.1:12700", false, true,
-			)
-		}
-		ctx.Next()
-	})
+	r.Use(auth.SessionMiddleware)
 	gvEngine := ginview.New(goview.Config{
 		Root:         "templates",
 		Extension:    ".tmpl",
@@ -197,6 +182,17 @@ func main() {
 	newsController := controllers.NewsController{}
 	twController := controllers.TrainWatchController{}
 	r.GET("/emig", emigController.Render)
+	r.GET("/auth/login", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "auth/login", gin.H{})
+	})
+	r.POST("/auth/login", func(c *gin.Context) {
+		p, _ := c.GetPostForm("floatingPassword")
+		u, _ := c.GetPostForm("floatingInput")
+		c.JSON(http.StatusOK, gin.H{
+			"p": p,
+			"u": u,
+		})
+	})
 	r.GET("/getdata/emig", emigController.GetTrainEngines)
 	r.GET("/tt", ttblCtrl.Render)
 	r.GET("/watch/form", twController.Render)
@@ -207,6 +203,7 @@ func main() {
 	})
 	r.GET("/station_select", ttblCtrl.RenderSelectorPage)
 	r.GET("/m", tdCtrl.Render)
+	r.GET("/esd", tdCtrl.ESDDisplay)
 	r.GET("/news", newsController.Render)
 	r.GET("/article", newsController.RenderArticle)
 

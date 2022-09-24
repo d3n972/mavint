@@ -35,7 +35,7 @@ services:
       - $PWD:/go/src
     entrypoint: sleep infinity
     ports:
-      - "12700:12700"
+      - "12702:12700"
   redis-commander:
     hostname: redis-commander
     image: rediscommander/redis-commander:latest

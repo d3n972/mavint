@@ -184,7 +184,7 @@ type STT_ArrivalScheduler struct {
 			FontName  string `json:"fontName"`
 			Character string `json:"character"`
 		} `json:"sign"`
-		TrainStopKind interface{} `json:"trainStopKind"`
+		TrainStopKind string `json:"trainStopKind"`
 	} `json:"services"`
 	ActualOrEstimatedStart  *time.Time `json:"actualOrEstimatedStart"`
 	ActualOrEstimatedArrive *time.Time `json:"actualOrEstimatedArrive"`

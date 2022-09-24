@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"html/template"
 	"strings"
 	"time"
@@ -10,6 +12,23 @@ import (
 
 func GetFuncMap() template.FuncMap {
 	return template.FuncMap{
+		"hhmm": func(v float64) string {
+			t := time.Time{}
+			t = t.Add(time.Duration(v) * time.Minute)
+			fmt.Printf("%+v\n%+v\n", t, time.Duration(v)*time.Minute)
+			return t.Format("15 óra 04 perc")
+		},
+		"hhmmTime": func(v time.Time) string {
+			return v.Format("15 óra 04 perc")
+		},
+		"json": func(v any) string {
+			k, e := json.MarshalIndent(v, "", "    ")
+			if e != nil {
+				fmt.Errorf("%s", e.Error())
+				return "{\"err\":" + e.Error() + "\"}"
+			}
+			return string(k)
+		},
 		"timediff": func(station models.TD_Scheduler) string {
 			if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {
 				t1 := *station.Arrive

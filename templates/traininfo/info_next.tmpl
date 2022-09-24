@@ -165,7 +165,7 @@
 
                     </div>
                     <div class="align-items-center col d-flex gap-2">
-                        <strong>{{$value.Station.Name}}{{if ne $value.Station.CoutryIso "HU"}}, {{$value.Station.Country}}{{end}}
+                        <strong>{{$value.Station.Name}}{{if ne $value.Station.CountryIso "HU"}}, {{$value.Station.Country}}{{end}}
                         </strong>
                         <div class="d-inline float-end">
                             {{ range $x, $svc := $value.Services}}
@@ -182,5 +182,8 @@
 
             </div>
         {{end}}
+        <div class="vstack my-3">
+            <a role="button" class="btn btn-success" href="/esd?tid={{.tid}}">ESD formátum</a>
+        </div>
     </div>
 {{end}}
