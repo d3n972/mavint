@@ -590,8 +590,8 @@ type TicketListingResponse struct {
 					ChangedTrackName interface{} `json:"changedTrackName"`
 				} `json:"departureTrack"`
 				ArrivalTrack struct {
-					Name             interface{} `json:"name"`
-					ChangedTrackName interface{} `json:"changedTrackName"`
+					Name             string `json:"name"`
+					ChangedTrackName string `json:"changedTrackName"`
 				} `json:"arrivalTrack"`
 				SameCar       bool `json:"sameCar"`
 				TravelClasses []struct {
@@ -603,15 +603,15 @@ type TicketListingResponse struct {
 					Name          string      `json:"name"`
 					Code          string      `json:"code"`
 					Coordinates   interface{} `json:"coordinates"`
-					ArrivalTime   interface{} `json:"arrivalTime"`
-					DepartureTime string      `json:"departureTime"`
+					ArrivalTime   *time.Time  `json:"arrivalTime"`
+					DepartureTime *time.Time  `json:"departureTime"`
 				} `json:"startStation"`
 				DestionationStation struct {
 					Name          string      `json:"name"`
 					Code          string      `json:"code"`
 					Coordinates   interface{} `json:"coordinates"`
 					ArrivalTime   string      `json:"arrivalTime"`
-					DepartureTime interface{} `json:"departureTime"`
+					DepartureTime *time.Time  `json:"departureTime"`
 				} `json:"destionationStation"`
 				TouchedStationsString          string        `json:"touchedStationsString"`
 				TouchedStations                []interface{} `json:"touchedStations"`

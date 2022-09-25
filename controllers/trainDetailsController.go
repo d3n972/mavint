@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/d3n972/mavint/services"
 	"github.com/go-redis/redis/v9"
 	"io"
 	"net/http"
@@ -57,13 +58,19 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 		payloadBytes, err := json.Marshal(data)
 		fmt.Printf("payloadBytes: %v\n", string(payloadBytes))
 		if err != nil {
-			// handle err
+			services.PanicHandler(ctx, gin.H{
+				"error":   err,
+				"payload": data,
+			})
 		}
 		body := bytes.NewReader(payloadBytes)
 
 		req, err := http.NewRequest("POST", "https://jegy-a.mav.hu/IK_API_PROD/api/InformationApi/GetTimetable", body)
 		if err != nil {
-			// handle err
+			services.PanicHandler(ctx, gin.H{
+				"error":   err,
+				"payload": data,
+			})
 		}
 		req.Header.Set("Accept", "application/json, text/plain, */*")
 		req.Header.Set("Accept-Language", "en-US,en-GB;q=0.9,en;q=0.8,hu-HU;q=0.7,hu;q=0.6")
@@ -85,7 +92,10 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
-			// handle err
+			services.PanicHandler(ctx, gin.H{
+				"error":   err,
+				"payload": data,
+			})
 		}
 		defer resp.Body.Close()
 		res, _ := io.ReadAll(resp.Body)

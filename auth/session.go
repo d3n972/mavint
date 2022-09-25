@@ -20,11 +20,6 @@ type Session struct {
 func SessionMiddleware(ctx *gin.Context) {
 	w, _ := ctx.Get("appctx")
 	appCtx := w.(scheduledTasks.AppContext)
-
-	if ctx.FullPath() == "/auth/login" {
-		ctx.Next()
-		return
-	}
 	sessid, err := ctx.Cookie("session_id")
 	if err == http.ErrNoCookie || appCtx.Redis.Exists(context.TODO(), "session:"+sessid).Val() == 0 {
 		o, _ := StartSession()
