@@ -162,6 +162,15 @@ func GetFuncMap() template.FuncMap {
 			return CSSColByDelay(time.Duration(int64(f)) * time.Minute)
 		},
 		"getCSSByDelay": CSSColByDelay,
+		"isConditionalStop": func(s models.Scheduler) bool {
+			isConditionalStop := false
+			for _, svc := range s.Services {
+				if svc.Sign.Character == "©" {
+					isConditionalStop = true
+				}
+			}
+			return isConditionalStop
+		},
 	}
 
 }
