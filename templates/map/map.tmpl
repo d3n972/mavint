@@ -87,10 +87,10 @@
                                 className: 'icon-train',
                                 iconSize: [55, 15],
                                 html: `<div class="align-items-center d-flex" style="flex-direction: column; background-color: ${bgColor}">
-    <span class="align-content-between d-flex" style='font-weight:700;'>${e['@TrainNumber'].replace('55', '')}</span>
+    <span class="align-content-between d-flex" style='font-weight:700;'>${e['@TrainNumber'].replace(/^(55|36)/g, '')}</span>
 </div>`
                             }),
-                        }).bindPopup(`<a href="/m?tid=${e['@TrainNumber'].replace('55', '')}">${e['@Delay'] + ' ' + e['@Relation']}</a>`))
+                        }).bindPopup(`<a href="/m?tid=${e['@TrainNumber'].replace(/^(55|36)/g, '')}">${e['@Delay'] + ' ' + e['@Relation']}</a>`))
                     })
                     let oldLayer = window.markerLayer
                     window.markerLayer = L.layerGroup(markers)
