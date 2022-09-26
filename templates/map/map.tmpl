@@ -69,18 +69,26 @@
                     let markers = [];
                     r.Train.forEach(e => {
                         let bgColor = "";
-                        if (e['@Delay'] >= 0.0 && e['@Delay'] <= 1.0) {
-                            bgColor = "#68C646";
-                        } else if (e['@Delay'] > 1.0 && e['@Delay'] <= 3.0) {
-                            bgColor = "#ABCC24";
-                        } else if (e['@Delay'] > 3.0 && e['@Delay'] <= 5.0) {
-                            bgColor = "#EED202";
-                        } else if (e['@Delay'] > 5.0 && e['@Delay'] <= 8.0) {
-                            bgColor = "#D57f0e";
-                        } else if (e['@Delay'] > 8.0 && e['@Delay'] <= 15.0) {
-                            bgColor = "#c95614";
+                        if (e['@Delay'] === 0.0) {
+                            bgColor = "#99ffdd";
+                        } else if (e['@Delay'] > 0.0 && e['@Delay'] <= 2.0) {
+                            bgColor = "#009f7b";
+                        } else if (e['@Delay'] > 2.0 && e['@Delay'] <= 5.0) {
+                            bgColor = "#2dc73b";
+                        } else if (e['@Delay'] > 5.0 && e['@Delay'] <= 10.0) {
+                            bgColor = "#b3de07";
+                        }else if (e['@Delay'] > 10.0 && e['@Delay'] <= 20.0) {
+                            bgColor = "#eed202";
+                        }else if (e['@Delay'] > 20.0 && e['@Delay'] <= 30.0) {
+                            bgColor = "#cea104";
+                        }else if (e['@Delay'] > 30.0 && e['@Delay'] <= 40.0) {
+                            bgColor = "#c57f07";
+                        }else if (e['@Delay'] > 40.0 && e['@Delay'] <= 50.0) {
+                            bgColor = "#c1570b";
+                        } else if (e['@Delay'] > 50.0 && e['@Delay'] <= 60.0) {
+                            bgColor = "#b6100a";
                         } else {
-                            bgColor = "#BC2C1A";
+                            bgColor = "#6e0e0a";
                         }
                         markers.push(L.marker([e['@Lat'], e['@Lon']], {
                             icon: L.divIcon({

@@ -59,19 +59,19 @@ func GetFuncMap() template.FuncMap {
 			}
 			return false
 		},
-		"getServiceIcons": func(train models.Scheduler) string {
+		"getServiceIcons": func(train models.Train) string {
 			return train.GetIconCharacters()
 		},
-		"timediffMins": func(station models.TD_Scheduler) float64 {
+		"timediffMins": func(station models.Scheduler) time.Duration {
 			if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {
 				t1 := *station.Arrive
 				t2 := station.ActualOrEstimatedArrive
 				delta := t2.Sub(t1)
-				return delta.Minutes()
+				return delta
 			}
-			return 0
+			return 0 * time.Minute
 		},
-		"delayReasons": func(s models.TS_TrainSchedDetails) string {
+		"delayReasons": func(s models.TrainSchedulerDetails) string {
 			return strings.Join(s.Train.HavarianInfok.HavariaInfo, " ")
 		},
 		"getExpectedHHMM": func(t time.Time) string {
@@ -138,26 +138,55 @@ func GetFuncMap() template.FuncMap {
 		},
 		"getTrainName": func(x any) string {
 
-			if x.(models.Scheduler).GetFullShortType() == "InterCity" {
-				return "IC" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			if x.(models.Train).GetFullShortType() == "InterCity" {
+				return "IC" + x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
 			}
-			if x.(models.Scheduler).GetFullShortType() == "InterRégió" {
-				return "IR" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			if x.(models.Train).GetFullShortType() == "InterRégió" {
+				return "IR" + x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
 			}
-			if x.(models.Scheduler).GetFullShortType() == "railjet xpress" {
-				return "RJX" + x.(models.Scheduler).GetCode()
+			if x.(models.Train).GetFullShortType() == "railjet xpress" {
+				return "RJX" + x.(models.Train).GetCode()
 			}
-			if x.(models.Scheduler).GetFullShortType() == "EuroCity" {
-				return "EC" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			if x.(models.Train).GetFullShortType() == "EuroCity" {
+				return "EC" + x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
 			}
-			if x.(models.Scheduler).GetFullShortType() == "EuroNight" {
-				return "EN" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			if x.(models.Train).GetFullShortType() == "EuroNight" {
+				return "EN" + x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
 			}
-			if x.(models.Scheduler).GetFullShortType() == "szeméyvonat" {
-				return x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			if x.(models.Train).GetFullShortType() == "szeméyvonat" {
+				return x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
 			}
-			return x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
+			return x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
 		},
+		"fGetCSSByDelay": func(f float64) string {
+			return CSSColByDelay(time.Duration(int64(f)) * time.Minute)
+		},
+		"getCSSByDelay": CSSColByDelay,
 	}
 
+}
+func CSSColByDelay(d time.Duration) string {
+	colorCode := ""
+	if d > 0*time.Minute && d <= 2*time.Minute {
+		colorCode = "#009f7b"
+	} else if d > 2*time.Minute && d <= 5*time.Minute {
+		colorCode = "#2dc73b"
+	} else if d > 5*time.Minute && d <= 10*time.Minute {
+		colorCode = "#b3de07"
+	} else if d > 10*time.Minute && d <= 20*time.Minute {
+		colorCode = "#eed202"
+	} else if d > 20*time.Minute && d <= 30*time.Minute {
+		colorCode = "#cea104"
+	} else if d > 30*time.Minute && d <= 40*time.Minute {
+		colorCode = "#c57f07"
+	} else if d > 40*time.Minute && d <= 50*time.Minute {
+		colorCode = "#c1570b"
+	} else if d > 50*time.Minute && d <= 60*time.Minute {
+		colorCode = "#b6100a"
+	} else if d > 60*time.Minute {
+		colorCode = "#6e0e0a"
+	} else {
+		colorCode = "#99ffdd"
+	}
+	return colorCode
 }
