@@ -127,6 +127,7 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 		"info":            train,
 		"tid":             ctx.Query("tid"),
 		"selectedTrainID": train.Train.TrainID,
+		"trid":            ctx.Query("train"),
 		"trains":          instance.TrainSchedulerDetails,
 		"numberOfTrains":  len(instance.TrainSchedulerDetails),
 	})
@@ -138,6 +139,13 @@ func (c *TrainDetailsController) ESDDisplay(ctx *gin.Context) {
 	staytime := 0 * time.Minute
 	var train models.TrainSchedulerDetails
 	train = instance.TrainSchedulerDetails[0]
+	if tid := ctx.Query("train"); tid != "" {
+		for _, detail := range instance.TrainSchedulerDetails {
+			if detail.Train.TrainID == tid {
+				train = detail
+			}
+		}
+	}
 	for _, stop := range train.Scheduler {
 		if stop.Start != nil && stop.Arrive != nil {
 			delta := stop.Start.Sub(*stop.Arrive)

@@ -61,13 +61,13 @@ asd
         <p>
             - <span style="font-style: italic;font-weight: 700;">F</span>: Feltételes megállóhely <br/>
             {{range $i,$svc:=.train.Services}}
-                - {{$svc.Description}}<br/>
+                - <span class="mnr">{{$svc.Sign.Character}}</span> {{$svc.Description}}<br/>
             {{end}}
         </p>
     </div>
-    <div class="d-none d-print-block float-end gap-4 mt-5 vstack" style="margin-right: 1ch;">
+    <div class="d-none d-print-block float-end gap-5 mt-5 vstack" style="margin-right: 1ch;">
         <div> Átvette: <span class="dottedline">&nbsp;</span></div>
-        <div>Aláírás: <span class="dottedline">&nbsp;</span></div>
+        <div>Aláírás: <span class="">&nbsp;</span></div>
 
     </div>
 {{end}}

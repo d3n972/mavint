@@ -136,46 +136,56 @@ func GetFuncMap() template.FuncMap {
 			}
 			return ""
 		},
-		"getTrainName": func(x any) string {
-
-			if x.(models.Train).GetFullShortType() == "InterCity" {
-				return "IC" + x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
-			}
-			if x.(models.Train).GetFullShortType() == "InterRégió" {
-				return "IR" + x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
-			}
-			if x.(models.Train).GetFullShortType() == "railjet xpress" {
-				return "RJX" + x.(models.Train).GetCode()
-			}
-			if x.(models.Train).GetFullShortType() == "EuroCity" {
-				return "EC" + x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
-			}
-			if x.(models.Train).GetFullShortType() == "EuroNight" {
-				return "EN" + x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
-			}
-			if x.(models.Train).GetFullShortType() == "szeméyvonat" {
-				return x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
-			}
-			return x.(models.Train).GetCode() + " " + *x.(models.Train).GetName()
-		},
-		"fGetCSSByDelay": func(f float64) string {
-			return CSSColByDelay(time.Duration(int64(f)) * time.Minute)
-		},
-		"getCSSByDelay": CSSColByDelay,
-		"isConditionalStop": func(s models.Scheduler) bool {
-			isConditionalStop := false
-			for _, svc := range s.Services {
-				if svc.Sign.Character == "©" {
-					isConditionalStop = true
-				}
-			}
-			return isConditionalStop
-		},
+		"getTrainName":      getTrainName[models.Train],
+		"fGetCSSByDelay":    CSSColByDelay[float64],
+		"getCSSByDelay":     CSSColByDelay[time.Duration],
+		"isConditionalStop": isConditionalStop,
 	}
 
 }
-func CSSColByDelay(d time.Duration) string {
+func isConditionalStop(s models.Scheduler) bool {
+	isConditionalStop := false
+	for _, svc := range s.Services {
+		if svc.Sign.Character == "©" {
+			isConditionalStop = true
+		}
+	}
+	return isConditionalStop
+}
+func getTrainName[T models.IScheduler](e T) string {
+	if x, ok := any(e).(models.IScheduler); ok {
+		if x.GetFullShortType() == "InterCity" {
+			return "IC" + x.GetCode() + " " + *x.GetName()
+		}
+		if x.GetFullShortType() == "InterRégió" {
+			return "IR" + x.GetCode() + " " + *x.GetName()
+		}
+		if x.GetFullShortType() == "railjet xpress" {
+			return "RJX" + x.GetCode()
+		}
+		if x.GetFullShortType() == "EuroCity" {
+			return "EC" + x.GetCode() + " " + *x.GetName()
+		}
+		if x.GetFullShortType() == "EuroNight" {
+			return "EN" + x.GetCode() + " " + *x.GetName()
+		}
+		if x.GetFullShortType() == "szeméyvonat" {
+			return x.GetCode() + " " + *x.GetName()
+		}
+		return x.GetCode() + " " + *x.GetName()
+	}
+	return ""
+}
+func CSSColByDelay[T interface {
+	time.Duration | float64 | int64
+}](a T) string {
 	colorCode := ""
+	d := time.Duration(0)
+	if k, ok := any(a).(time.Duration); ok {
+		d = k
+	} else {
+		d = time.Duration(int64(k)) * time.Minute
+	}
 	if d > 0*time.Minute && d <= 2*time.Minute {
 		colorCode = "#009f7b"
 	} else if d > 2*time.Minute && d <= 5*time.Minute {

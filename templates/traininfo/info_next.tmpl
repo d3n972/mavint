@@ -33,7 +33,7 @@
                 <select name="train" id="train" class="">
                     {{range $x, $train := .trains}}
                         <option value="{{$train.Train.TrainID}}">
-                            {{$train.Train.Code}} {{$train.Train.Name}} {{$train.Train.FullType}}
+                            {{$train.Train.Code}} {{$train.Train.GetFullShortType}} {{$train.Train.GetName}}
                             ({{$train.Train.StartStation.Name}} -> {{$train.Train.EndStation.Name}})
                         </option>
                     {{end}}
@@ -170,7 +170,7 @@
             </div>
         {{end}}
         <div class="vstack my-3">
-            <a role="button" class="btn btn-success" href="/esd?tid={{.tid}}">ESD formátum</a>
+            <a role="button" class="btn btn-success" href="/esd?tid={{.tid}}&train={{.trid}}">ESD formátum</a>
         </div>
     </div>
 {{end}}
