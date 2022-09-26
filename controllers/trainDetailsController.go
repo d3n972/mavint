@@ -136,7 +136,7 @@ func (c *TrainDetailsController) ESDDisplay(ctx *gin.Context) {
 	instance := models.TrainDetailsResponse{}
 	json.Unmarshal(apiresp, &instance)
 	staytime := 0 * time.Minute
-	var train models.TS_TrainSchedDetails
+	var train models.TrainSchedulerDetails
 	train = instance.TrainSchedulerDetails[0]
 	for _, stop := range train.Scheduler {
 		if stop.Start != nil && stop.Arrive != nil {

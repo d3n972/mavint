@@ -7,14 +7,14 @@ import (
 
 var emptyStr string
 
-type Scheduler interface {
+type IScheduler interface {
 	GetName() *string
 	GetFullShortType() string
 	GetCode() string
 	GetIconCharacters() string
 }
 type STT_ArrivalScheduler struct {
-	Scheduler
+	IScheduler
 	AggregatedServiceIds        []interface{} `json:"aggregatedServiceIds"`
 	Name                        *string       `json:"name"`
 	SeatReservationCode         string        `json:"seatReservationCode"`

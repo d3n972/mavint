@@ -395,8 +395,8 @@ type TicketListingResponse struct {
 						FullNameAndPiktogram struct {
 							Collection string `json:"(Collection)"`
 						} `json:"fullNameAndPiktogram"`
-						Footer           interface{} `json:"footer"`
-						ViszonylatiJel   interface{} `json:"viszonylatiJel"`
+						Footer           interface{}    `json:"footer"`
+						ViszonylatiJel   ViszonylatiJel `json:"viszonylatiJel"`
 						ViszonylatObject struct {
 							StartStationCode  string      `json:"startStationCode"`
 							StartTime         time.Time   `json:"startTime"`

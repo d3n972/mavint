@@ -8,7 +8,7 @@ type Param struct {
 	History bool `json:"history"`
 	ID      bool `json:"id"`
 }
-type Train struct {
+type VITrain struct {
 	Delay       int     `json:"@Delay"`
 	Lat         float64 `json:"@Lat"`
 	Relation    string  `json:"@Relation"`
@@ -19,7 +19,7 @@ type Train struct {
 	ElviraID    string  `json:"@ElviraID"`
 }
 type Trains struct {
-	Train []Train `json:"Train"`
+	Train []VITrain `json:"Train"`
 }
 type Result struct {
 	PackageType  string `json:"@PackageType"`
