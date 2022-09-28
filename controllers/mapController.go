@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/d3n972/mavint/models"
 	"github.com/gin-gonic/gin"
@@ -19,6 +21,32 @@ func (m *MapController) Render(ctx *gin.Context) {
 }
 func (m *MapController) GetData(ctx *gin.Context) {
 	x := m.ApiGetTrainCoords().D.Result.Trains
+	iemig := EmigController{}
+	emigData := iemig.getData()
+
+	for _, engine := range emigData.Mozdonyok.Mozdony {
+		if engine.Tipus != "S" {
+			lat, _ := strconv.Atoi(engine.Lat)
+			lon, _ := strconv.Atoi(engine.Lng)
+			mvonal := engine.Vonatszam
+			if engine.Vonatszam == "" {
+				formattedUIC := fmt.Sprintf("%s %s %s %s-%s",
+					engine.Uic[0:2], engine.Uic[2:4], engine.Uic[4:8], engine.Uic[8:11], engine.Uic[11:12])
+				mvonal = formattedUIC
+			}
+			x.Train = append(x.Train, models.VITrain{
+				Delay:    0,
+				Lat:      float64(lat) / 1000000,
+				Relation: engine.Uic,
+				TrainNumber: engine.Tipus + " " + fmt.Sprintf("%s %s %s %s-%s",
+					engine.Uic[0:2], engine.Uic[2:4], engine.Uic[4:8], engine.Uic[8:11], engine.Uic[11:12]),
+				Menetvonal: mvonal,
+				Line:       engine.Uic,
+				Lon:        float64(lon) / 1000000,
+				ElviraID:   "EMIG." + engine.Uic,
+			})
+		}
+	}
 	ctx.JSON(http.StatusOK, x)
 }
 
