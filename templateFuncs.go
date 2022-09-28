@@ -59,7 +59,7 @@ func GetFuncMap() template.FuncMap {
 			}
 			return false
 		},
-		"getServiceIcons": func(train models.Train) string {
+		"getServiceIcons": func(train models.IScheduler) string {
 			return train.GetIconCharacters()
 		},
 		"timediffMins": func(station models.Scheduler) time.Duration {
@@ -136,7 +136,7 @@ func GetFuncMap() template.FuncMap {
 			}
 			return ""
 		},
-		"getTrainName":      getTrainName[models.Train],
+		"getTrainName":      getTrainName[models.IScheduler],
 		"fGetCSSByDelay":    CSSColByDelay[float64],
 		"getCSSByDelay":     CSSColByDelay[time.Duration],
 		"isConditionalStop": isConditionalStop,

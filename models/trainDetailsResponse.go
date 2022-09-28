@@ -1,5 +1,5 @@
 package models
 
 type TrainDetailsResponse struct {
-	StationSchedule
+	TrainSchedulerDetails []TrainSchedulerDetails `json:"trainSchedulerDetails"`
 }

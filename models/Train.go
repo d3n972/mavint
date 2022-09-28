@@ -16,12 +16,12 @@ type Train struct {
 	EndStationReservationCode   string               `json:"endStationReservationCode"`
 	StartStation                StartStation         `json:"startStation"`
 	EndStation                  EndStation           `json:"endStation"`
-	StartDate                   time.Time            `json:"startDate"`
+	StartDate                   *time.Time           `json:"startDate"`
 	OrigStartStation            Station              `json:"origStartStation"`
 	OrigEndStation              Station              `json:"origEndStation"`
-	Start                       time.Time            `json:"start"`
+	Start                       *time.Time           `json:"start"`
 	VirtualStart                bool                 `json:"virtualStart"`
-	Arrive                      time.Time            `json:"arrive"`
+	Arrive                      *time.Time           `json:"arrive"`
 	VirtualArrive               bool                 `json:"virtualArrive"`
 	Distance                    float64              `json:"distance"`
 	ClosedTrackway              bool                 `json:"closedTrackway"`
@@ -31,8 +31,8 @@ type Train struct {
 	KindsToDisplay              []KindsToDisplay     `json:"kindsToDisplay"`
 	Kind                        Kind                 `json:"kind"`
 	Services                    []Services           `json:"services"`
-	ActualOrEstimatedStart      time.Time            `json:"actualOrEstimatedStart"`
-	ActualOrEstimatedArrive     time.Time            `json:"actualOrEstimatedArrive"`
+	ActualOrEstimatedStart      *time.Time           `json:"actualOrEstimatedStart"`
+	ActualOrEstimatedArrive     *time.Time           `json:"actualOrEstimatedArrive"`
 	HavarianInfok               HavarianInfok        `json:"havarianInfok"`
 	DirectTrains                []DirectTrains       `json:"directTrains"`
 	CarrierTrains               interface{}          `json:"carrierTrains"`

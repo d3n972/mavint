@@ -56,6 +56,7 @@
         <div class="">
             {{$havinfo := .delays}}
             {{ range $x, $value := .arrival }}
+
                 <div style="
                 {{$idx := $value.GetCode}}
                 {{ with (index $havinfo $idx) }}
@@ -113,7 +114,7 @@
                border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
                background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
            {{else}}
-               fill: #{{$value.Kind.BackgrouColorCode}};
+               fill: #{{$value.Kind.BackgroundColorCode}};
                border: 1px solid #{{$value.Kind.ForegroundColorCode}};
                background-color:#{{$value.Kind.ForegroundColorCode}}
            {{end}}">
@@ -130,7 +131,7 @@
                         </span>
                             </div>
                         </div>
-                        <div class="align-items-center col-1 d-flex me-2" onclick="ShowSpinner();document.location='/train/{{$value.TrainID}}'">
+                        <div class="align-items-center col-1 d-flex me-2" onclick="ShowSpinner();document.location='/m?tid={{$value.Code}}'">
                             <i class="bi bi-chevron-right"></i>
                         </div>
                     </div>
@@ -200,7 +201,7 @@
                border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
                background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
            {{else}}
-               fill: #{{$value.Kind.BackgrouColorCode}};
+               fill: #{{$value.Kind.BackgroundColorCode}};
                border: 1px solid #{{$value.Kind.ForegroundColorCode}};
                background-color:#{{$value.Kind.ForegroundColorCode}}
            {{end}}">
@@ -217,7 +218,7 @@
                         </span>
                         </div>
                     </div>
-                    <div class="align-items-center col-1 d-flex me-2" onclick="ShowSpinner();document.location='/train/{{$value.TrainID}}'">
+                    <div class="align-items-center col-1 d-flex me-2" onclick="ShowSpinner();document.location='/m?tid={{$value.Code}}'">
                         <i class="bi bi-chevron-right"></i>
                     </div>
                 </div>
