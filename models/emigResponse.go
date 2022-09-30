@@ -2,23 +2,24 @@ package models
 
 import "encoding/xml"
 
+type Mozdony struct {
+	Text      string `xml:",chardata"`
+	ID        string `xml:"id,attr"`
+	Lat       string `xml:"lat,attr"`
+	Lng       string `xml:"lng,attr"`
+	Icon      string `xml:"icon,attr"`
+	Title     string `xml:"title,attr"`
+	Tipus     string `xml:"tipus,attr"`
+	Vonatszam string `xml:"vonatszam,attr"`
+	Uic       string `xml:"uic,attr"`
+}
 type EmigResponse struct {
 	XMLName   xml.Name `xml:"response"`
 	Text      string   `xml:",chardata"`
 	Mozdonyok struct {
-		Text    string `xml:",chardata"`
-		ID      string `xml:"id,attr"`
-		Mozdony []struct {
-			Text      string `xml:",chardata"`
-			ID        string `xml:"id,attr"`
-			Lat       string `xml:"lat,attr"`
-			Lng       string `xml:"lng,attr"`
-			Icon      string `xml:"icon,attr"`
-			Title     string `xml:"title,attr"`
-			Tipus     string `xml:"tipus,attr"`
-			Vonatszam string `xml:"vonatszam,attr"`
-			Uic       string `xml:"uic,attr"`
-		} `xml:"Mozdony"`
+		Text    string    `xml:",chardata"`
+		ID      string    `xml:"id,attr"`
+		Mozdony []Mozdony `xml:"Mozdony"`
 	} `xml:"mozdonyok"`
 	Asqf      string `xml:"asqf"`
 	Copyright string `xml:"copyright"`

@@ -85,7 +85,7 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 		req.Header.Set("Sec-Fetch-Mode", "cors")
 		req.Header.Set("Sec-Fetch-Site", "same-site")
 		req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36")
-		req.Header.Set("Usersessionid", "\"4d793891-0e70-45b5-a5c6-64eddbba2532\"")
+		req.Header.Set("Usersessionid", "4d793891-0e70-45b5-a9c6-64eddbba2532")
 		req.Header.Set("Sec-Ch-Ua", "\"Chromium\";v=\"104\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"104\"")
 		req.Header.Set("Sec-Ch-Ua-Mobile", "?0")
 		req.Header.Set("Sec-Ch-Ua-Platform", "\"Linux\"")
@@ -110,9 +110,12 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 }
 func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	apiresp := c.getApiResponse(ctx)
+	check := gin.H{}
 	instance := models.TrainDetailsResponse{}
 	json.Unmarshal(apiresp, &instance)
-
+	json.Unmarshal(apiresp, &check)
+	q, _ := json.MarshalIndent(check, "", "  ")
+	fmt.Printf("%s", string(q))
 	train := instance.TrainSchedulerDetails[0]
 	if tid := ctx.Query("train"); tid != "" {
 		for _, detail := range instance.TrainSchedulerDetails {
@@ -127,6 +130,7 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 		"info":            train,
 		"tid":             ctx.Query("tid"),
 		"selectedTrainID": train.Train.TrainID,
+		"trid":            ctx.Query("train"),
 		"trains":          instance.TrainSchedulerDetails,
 		"numberOfTrains":  len(instance.TrainSchedulerDetails),
 	})
@@ -136,8 +140,15 @@ func (c *TrainDetailsController) ESDDisplay(ctx *gin.Context) {
 	instance := models.TrainDetailsResponse{}
 	json.Unmarshal(apiresp, &instance)
 	staytime := 0 * time.Minute
-	var train models.TS_TrainSchedDetails
+	var train models.TrainSchedulerDetails
 	train = instance.TrainSchedulerDetails[0]
+	if tid := ctx.Query("train"); tid != "" {
+		for _, detail := range instance.TrainSchedulerDetails {
+			if detail.Train.TrainID == tid {
+				train = detail
+			}
+		}
+	}
 	for _, stop := range train.Scheduler {
 		if stop.Start != nil && stop.Arrive != nil {
 			delta := stop.Start.Sub(*stop.Arrive)

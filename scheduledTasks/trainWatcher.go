@@ -23,8 +23,8 @@ func sendNotice(hc models.HavariaCache, train db.WatchedTrain) {
 			"token": "YoBNiLmI2PS8pDlIJatOx-osh25iDu5S237awOXpF81qjoFehKUS5v6Hhl6x-x0Gq_Md",
 			"name":  "TrainNotice",
 		})
-	templateS := `**Train Delay Notice**
-The Train with number **{{.TrainID}}** is running **{{.Delay}}** minutes late!
+	templateS := `**VI_Train Delay Notice**
+The VI_Train with number **{{.TrainID}}** is running **{{.Delay}}** minutes late!
 `
 	tmpl, _ := template.New("delaynotice").Parse(templateS)
 	b := new(strings.Builder)

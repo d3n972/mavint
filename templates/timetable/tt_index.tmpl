@@ -36,7 +36,7 @@
                 <table class="/*table table-sm table-borderless*/">
                     <tbody class="d-flex flex-column">
                     {{ range $x, $value := .arrival }}
-
+                        <pre>{{$value|json}}</pre>
                         <tr
                                 class="
     {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
@@ -75,7 +75,7 @@
                             border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
                             background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
                         {{else}}
-                            fill: #{{$value.Kind.BackgrouColorCode}};
+                            fill: #{{$value.Kind.BackgroundColorCode}};
                             border: 1px solid #{{$value.Kind.ForegroundColorCode}};
                             background-color:#{{$value.Kind.ForegroundColorCode}}
                         {{end}}">
@@ -134,7 +134,7 @@
                                 <div class="d-flex" style="
                                         padding: 2px 5px;
                                         border-radius: 4px;
-                                        color: #{{$value.Kind.BackgrouColorCode}};
+                                        color: #{{$value.Kind.BackgroundColorCode}};
                                         ">
                                     {{if $value.ViszonylatiJel.Sign.Character}}
                                     <span style="font-family: MNR;font-size:2.5ch;
@@ -156,7 +156,7 @@
                             border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
                             background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
                         {{else}}
-                            fill: #{{$value.Kind.BackgrouColorCode}};
+                            fill: #{{$value.Kind.BackgroundColorCode}};
                             border: 1px solid #{{$value.Kind.ForegroundColorCode}};
                             background-color:#{{$value.Kind.ForegroundColorCode}}
                         {{end}}">

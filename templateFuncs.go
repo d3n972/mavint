@@ -59,19 +59,19 @@ func GetFuncMap() template.FuncMap {
 			}
 			return false
 		},
-		"getServiceIcons": func(train models.Scheduler) string {
+		"getServiceIcons": func(train models.IScheduler) string {
 			return train.GetIconCharacters()
 		},
-		"timediffMins": func(station models.TD_Scheduler) float64 {
+		"timediffMins": func(station models.Scheduler) time.Duration {
 			if station.Arrive != nil && station.ActualOrEstimatedArrive != nil {
 				t1 := *station.Arrive
 				t2 := station.ActualOrEstimatedArrive
 				delta := t2.Sub(t1)
-				return delta.Minutes()
+				return delta
 			}
-			return 0
+			return 0 * time.Minute
 		},
-		"delayReasons": func(s models.TS_TrainSchedDetails) string {
+		"delayReasons": func(s models.TrainSchedulerDetails) string {
 			return strings.Join(s.Train.HavarianInfok.HavariaInfo, " ")
 		},
 		"getExpectedHHMM": func(t time.Time) string {
@@ -136,28 +136,76 @@ func GetFuncMap() template.FuncMap {
 			}
 			return ""
 		},
-		"getTrainName": func(x any) string {
-
-			if x.(models.Scheduler).GetFullShortType() == "InterCity" {
-				return "IC" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
-			}
-			if x.(models.Scheduler).GetFullShortType() == "InterRégió" {
-				return "IR" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
-			}
-			if x.(models.Scheduler).GetFullShortType() == "railjet xpress" {
-				return "RJX" + x.(models.Scheduler).GetCode()
-			}
-			if x.(models.Scheduler).GetFullShortType() == "EuroCity" {
-				return "EC" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
-			}
-			if x.(models.Scheduler).GetFullShortType() == "EuroNight" {
-				return "EN" + x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
-			}
-			if x.(models.Scheduler).GetFullShortType() == "szeméyvonat" {
-				return x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
-			}
-			return x.(models.Scheduler).GetCode() + " " + *x.(models.Scheduler).GetName()
-		},
+		"getTrainName":      getTrainName[models.IScheduler],
+		"fGetCSSByDelay":    CSSColByDelay[float64],
+		"getCSSByDelay":     CSSColByDelay[time.Duration],
+		"isConditionalStop": isConditionalStop,
 	}
 
+}
+func isConditionalStop(s models.Scheduler) bool {
+	isConditionalStop := false
+	for _, svc := range s.Services {
+		if svc.Sign.Character == "©" {
+			isConditionalStop = true
+		}
+	}
+	return isConditionalStop
+}
+func getTrainName[T models.IScheduler](e T) string {
+	if x, ok := any(e).(models.IScheduler); ok {
+		if x.GetFullShortType() == "InterCity" {
+			return "IC" + x.GetCode() + " " + *x.GetName()
+		}
+		if x.GetFullShortType() == "InterRégió" {
+			return "IR" + x.GetCode() + " " + *x.GetName()
+		}
+		if x.GetFullShortType() == "railjet xpress" {
+			return "RJX" + x.GetCode()
+		}
+		if x.GetFullShortType() == "EuroCity" {
+			return "EC" + x.GetCode() + " " + *x.GetName()
+		}
+		if x.GetFullShortType() == "EuroNight" {
+			return "EN" + x.GetCode() + " " + *x.GetName()
+		}
+		if x.GetFullShortType() == "szeméyvonat" {
+			return x.GetCode() + " " + *x.GetName()
+		}
+		return x.GetCode() + " " + *x.GetName()
+	}
+	return ""
+}
+func CSSColByDelay[T interface {
+	time.Duration | float64 | int64
+}](a T) string {
+	colorCode := ""
+	d := time.Duration(0)
+	if k, ok := any(a).(time.Duration); ok {
+		d = k
+	} else {
+		d = time.Duration(int64(k)) * time.Minute
+	}
+	if d > 0*time.Minute && d <= 2*time.Minute {
+		colorCode = "#009f7b"
+	} else if d > 2*time.Minute && d <= 5*time.Minute {
+		colorCode = "#2dc73b"
+	} else if d > 5*time.Minute && d <= 10*time.Minute {
+		colorCode = "#b3de07"
+	} else if d > 10*time.Minute && d <= 20*time.Minute {
+		colorCode = "#eed202"
+	} else if d > 20*time.Minute && d <= 30*time.Minute {
+		colorCode = "#cea104"
+	} else if d > 30*time.Minute && d <= 40*time.Minute {
+		colorCode = "#c57f07"
+	} else if d > 40*time.Minute && d <= 50*time.Minute {
+		colorCode = "#c1570b"
+	} else if d > 50*time.Minute && d <= 60*time.Minute {
+		colorCode = "#b6100a"
+	} else if d > 60*time.Minute {
+		colorCode = "#6e0e0a"
+	} else {
+		colorCode = "#99ffdd"
+	}
+	return colorCode
 }

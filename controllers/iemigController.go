@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/xml"
-	"fmt"
 	"github.com/d3n972/mavint/models"
 	"github.com/gin-gonic/gin"
 	"io"
@@ -15,7 +14,6 @@ type EmigController struct{}
 
 func (e *EmigController) getData() models.EmigResponse {
 	creds := models.NewEmigClient()
-	fmt.Printf("%+v\n", creds)
 	params := url.Values{}
 	params.Add("u", `public`)
 	params.Add("s", creds.SessionId)
@@ -54,7 +52,6 @@ func (e *EmigController) getData() models.EmigResponse {
 	defer resp.Body.Close()
 	er := models.EmigResponse{}
 	xml.Unmarshal(respbytes, &er)
-	fmt.Printf("%+v", er)
 	return er
 }
 func (e *EmigController) GetTrainEngines(ctx *gin.Context) {
