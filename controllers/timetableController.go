@@ -84,6 +84,38 @@ func (tt *TimetableController) callApi(ctx *gin.Context) []byte {
 	}
 	return responseBytes
 }
+func (tt *TimetableController) getStations(ctx *gin.Context) []byte {
+	req, err := http.NewRequest("POST", "https://jegy-a.mav.hu/IK_API_PROD/api/OfferRequestApi/GetStationList", nil)
+	if err != nil {
+		// handle err
+	}
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Accept-Language", "en-US,en-GB;q=0.9,en;q=0.8,hu-HU;q=0.7,hu;q=0.6")
+	req.Header.Set("Cache-Control", "no-cache")
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("Content-Length", "0")
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	req.Header.Set("Language", "hu")
+	req.Header.Set("Origin", "https://jegy.mav.hu")
+	req.Header.Set("Pragma", "no-cache")
+	req.Header.Set("Referer", "https://jegy.mav.hu/")
+	req.Header.Set("Sec-Fetch-Dest", "empty")
+	req.Header.Set("Sec-Fetch-Mode", "cors")
+	req.Header.Set("Sec-Fetch-Site", "same-site")
+	req.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36")
+	req.Header.Set("Usersessionid", "\"0ccc3dc1-8365-474f-99fe-e433c107df19\"")
+	req.Header.Set("Sec-Ch-Ua", "\"Google Chrome\";v=\"105\", \"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"105\"")
+	req.Header.Set("Sec-Ch-Ua-Mobile", "?0")
+	req.Header.Set("Sec-Ch-Ua-Platform", "\"Linux\"")
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		// handle err
+	}
+	defer resp.Body.Close()
+	b, _ := io.ReadAll(resp.Body)
+	return b
+}
 func (tt *TimetableController) Render(ctx *gin.Context) {
 	hc := models.HavariaCache{}
 	resp := tt.callApi(ctx)
@@ -101,5 +133,10 @@ func (tt *TimetableController) Render(ctx *gin.Context) {
 	})
 }
 func (tt *TimetableController) RenderSelectorPage(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "timetable/station_selector", gin.H{})
+	resp := tt.getStations(ctx)
+	m := []models.StationsResponse{}
+	json.Unmarshal(resp, &m)
+	ctx.HTML(http.StatusOK, "timetable/station_selector", gin.H{
+		"stations": m,
+	})
 }
