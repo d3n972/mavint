@@ -18,6 +18,20 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  purge-image:
+    name: Delete image from ghcr.io
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete image
+        uses: bots-house/ghcr-delete-image-action@v1.0.0
+        with:
+          # NOTE: at now only orgs is supported
+          owner: d3n972
+          name: mavint
+          # NOTE: using Personal Access Token
+          token: ${{ secrets.PAT }}
+          tag: main
+          
   build-and-push-image:
     runs-on: self-hosted
     permissions:
@@ -40,7 +54,6 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
