@@ -49,6 +49,7 @@ func main() {
 	//schedRunner.AddTask("redisTask", scheduledTasks.GetRedisTask())
 	schedRunner.AddTask("havariaUpdaterTask", scheduledTasks.HavarianUpdaterTask())
 	schedRunner.AddTask("trainWatchTask", scheduledTasks.WatchTrainsTask())
+	schedRunner.AddTask("EngineLoggerTask", scheduledTasks.EngineLoggerTask())
 
 	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
