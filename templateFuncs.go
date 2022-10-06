@@ -12,6 +12,13 @@ import (
 
 func GetFuncMap() template.FuncMap {
 	return template.FuncMap{
+		"humandate": func(t time.Time) string {
+			return t.Format("2006. 01. 02. 15:04")
+		},
+		"UIC": func(uic string) string {
+			return fmt.Sprintf("%s %s %s %s-%s",
+				uic[0:2], uic[2:4], uic[4:8], uic[8:11], uic[11:12])
+		},
 		"hhmm": func(v float64) string {
 			t := time.Time{}
 			t = t.Add(time.Duration(v) * time.Minute)

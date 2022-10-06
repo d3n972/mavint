@@ -1,0 +1,31 @@
+{{define "title"}}Home{{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent"}}{{end}}
+{{define "footerContent"}}{{end}}
+{{define "main"}}
+    <div class="vstack">
+        <div class="p-2 hstack border border-3">
+            <div class="col">LogDate</div>
+            <div class="col">Type</div>
+            <div class="col">Train#</div>
+        </div>
+        {{range $i,$rec:=.r}}
+            <div class="p-2 hstack border border-1">
+                <div class="col">
+                    {{$rec.LoggedAt|humandate}}
+                </div>
+                <div class="col">
+                    {{if eq $rec.JobType "M"}}
+                        Mozdony
+                    {{else if eq $rec.JobType "T"}}
+                        Teher
+                    {{else}}
+                        Személy
+                    {{end}}
+                </div>
+                <div class="col"><a
+                            href="/m?tid={{$rec.TrainNumber}}">{{$rec.TrainNumber}}</a></div>
+            </div>
+        {{end}}
+    </div>
+{{end}}

@@ -116,6 +116,14 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	json.Unmarshal(apiresp, &check)
 	q, _ := json.MarshalIndent(check, "", "  ")
 	fmt.Printf("%s", string(q))
+	if instance.TrainSchedulerDetails == nil {
+		//we have an error!
+		ctx.HTML(http.StatusNotFound, "pages/article", gin.H{
+			"title":   instance.ExceptionMessage,
+			"pub":     "",
+			"content": []interface{}{},
+		})
+	}
 	train := instance.TrainSchedulerDetails[0]
 	if tid := ctx.Query("train"); tid != "" {
 		for _, detail := range instance.TrainSchedulerDetails {

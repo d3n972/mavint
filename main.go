@@ -88,6 +88,11 @@ func main() {
 	emigController := controllers.EmigController{}
 	newsController := controllers.NewsController{}
 	twController := controllers.TrainWatchController{}
+	edController := controllers.EngineDetailsController{}
+
+	r.GET("/ed", edController.CountsForDay)
+	r.GET("/ed/:date/:uic", edController.Render)
+
 	r.GET("/emig", emigController.Render)
 	r.GET("/auth/login", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "auth/login", gin.H{})

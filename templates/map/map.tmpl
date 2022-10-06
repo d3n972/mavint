@@ -126,7 +126,7 @@
     <span class="align-content-between d-flex" style='font-weight:700;'>${e['@TrainNumber'].replace(/^(36|43|55)/g, '')}</span>
 </div>`
                                 }),
-                            }).bindPopup(`<a href="/m?tid=${e['@TrainNumber'].replace(/^(36|43|55)/g, '')}">${e['@Delay'] + ' ' + e['@Relation']}</a>`))
+                            }).bindPopup(`<a href="/m?tid=${e['@TrainNumber'].replace(/^(36|43|55)/g, '')}">${e['@Delay'] + ' ' + e['@Relation']}`))
                         } else {
                             typeCode = e['@TrainNumber']
                             markers.push(L.marker([e['@Lat'], e['@Lon']], {
@@ -134,10 +134,10 @@
                                     className: 'icon-train',
                                     iconSize: [55, 15],
                                     html: `<div class="align-items-center d-flex" style="flex-direction: column; background-color: #88c7dc;width: 17ch">
-    <span class="align-content-between d-flex" style='font-weight:700;'>${e['@TrainNumber'].replace(/^(36|43|55)/g, '')}</span>
+    <span class="align-content-between d-flex" style='font-weight:700;'>${e['@TrainNumber'].replace(/^(36|43|55)/g, '')}</a></span>
 </div>`
                                 }),
-                            }).bindPopup(`${ window.typeMap[e['@Line'].split(" ")[2]]+ ' ' + e['@TrainNumber']}`))
+                            }).bindPopup(`${window.typeMap[e['@Line'].split(" ")[2]] + ' '}<a href="/ed/${(new Date()).toJSON().split('T')[0]}/${e['@Relation']}">${e['@TrainNumber']}</a>`))
                         }
                     })
                     let oldLayer = window.markerLayer
