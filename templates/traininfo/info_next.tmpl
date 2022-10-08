@@ -91,6 +91,9 @@
             <h3 class="my-auto">{{.info.Train.FullName}} </h3>
         </div>
         <h4>{{.info.Train.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{.info.Train.EndStation.Name}}</h4>
+        {{if ne .engineUIC ""}}
+            <h6>Mozdony: <a href="/ed/{{.currDate}}/{{.engineUIC}}"><code>{{.engineUIC|UIC}}</code></a></h6>
+        {{end}}
     </div>
     {{ if .info.Train.HavarianInfok.AktualisKeses}}
         <div class="alert alert-danger" role="alert">

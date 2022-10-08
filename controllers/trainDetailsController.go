@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/d3n972/mavint/scheduledTasks"
 	"github.com/d3n972/mavint/services"
 	"github.com/go-redis/redis/v9"
 	"io"
@@ -114,8 +115,6 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	instance := models.TrainDetailsResponse{}
 	json.Unmarshal(apiresp, &instance)
 	json.Unmarshal(apiresp, &check)
-	q, _ := json.MarshalIndent(check, "", "  ")
-	fmt.Printf("%s", string(q))
 	if instance.TrainSchedulerDetails == nil {
 		//we have an error!
 		ctx.HTML(http.StatusNotFound, "pages/article", gin.H{
@@ -128,17 +127,22 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	if tid := ctx.Query("train"); tid != "" {
 		for _, detail := range instance.TrainSchedulerDetails {
 			if detail.Train.TrainID == tid {
-				fmt.Println(tid)
 				train = detail
 			}
 		}
 	}
+
+	ed := services.EngineDiscovery{}
+	appctx, _ := ctx.Get("appctx")
+	engine, _ := ed.FindByTrainNumber(context.WithValue(context.Background(), "db", appctx.(scheduledTasks.AppContext).Db), train.Train.Code)
 
 	ctx.HTML(http.StatusOK, "traininfo/info_next", gin.H{
 		"info":            train,
 		"tid":             ctx.Query("tid"),
 		"selectedTrainID": train.Train.TrainID,
 		"trid":            ctx.Query("train"),
+		"engineUIC":       engine.UIC,
+		"currDate":		time.Now().Format("2006-01-02"),
 		"trains":          instance.TrainSchedulerDetails,
 		"numberOfTrains":  len(instance.TrainSchedulerDetails),
 	})
