@@ -2,6 +2,7 @@ package scheduledTasks
 
 import (
 	"fmt"
+	"github.com/artonge/go-gtfs"
 	"runtime/debug"
 	"time"
 
@@ -14,6 +15,7 @@ type HandlerFunction func(ctx AppContext)
 type AppContext struct {
 	Db    *gorm.DB
 	Redis *redis.Client
+	Gtfs  *gtfs.GTFS
 }
 type Schedule struct {
 	Interval time.Duration

@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"github.com/artonge/go-gtfs"
 	"github.com/d3n972/mavint/auth"
 	"github.com/d3n972/mavint/controllers"
 	"github.com/d3n972/mavint/db"
@@ -13,6 +14,7 @@ import (
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/gin-gonic/gin"
 	redis "github.com/go-redis/redis/v9"
+
 	"net/http"
 	"os"
 	"path/filepath"
@@ -44,12 +46,21 @@ func main() {
 		Password: "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", // no password set
 		DB:       0,                                  // use default DB
 	})
-
+	//load gtfs
+	if g, err := gtfs.Load("/var/lib/gtfs", nil); err != nil {
+		y := scheduledTasks.GTFSUpdaterTask()
+		y.Handler(appCtx)
+		g, _ := gtfs.Load("/var/lib/gtfs", nil)
+		appCtx.Gtfs = g
+	} else {
+		appCtx.Gtfs = g
+	}
 	schedRunner := scheduledTasks.NewTaskRunner()
 	//schedRunner.AddTask("redisTask", scheduledTasks.GetRedisTask())
 	schedRunner.AddTask("havariaUpdaterTask", scheduledTasks.HavarianUpdaterTask())
 	schedRunner.AddTask("trainWatchTask", scheduledTasks.WatchTrainsTask())
 	schedRunner.AddTask("EngineLoggerTask", scheduledTasks.EngineLoggerTask())
+	schedRunner.AddTask("GTFSUpdaterTask", scheduledTasks.GTFSUpdaterTask())
 
 	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
@@ -62,6 +73,7 @@ func main() {
 	r.Use(func(ctx *gin.Context) {
 		ctx.Set("cache", appCtx.Redis)
 		ctx.Set("appctx", appCtx)
+
 		ctx.Next()
 	})
 	r.Use(auth.SessionMiddleware)

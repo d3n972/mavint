@@ -1,6 +1,9 @@
 package models
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"strconv"
+)
 
 type Mozdony struct {
 	Text      string `xml:",chardata"`
@@ -13,6 +16,16 @@ type Mozdony struct {
 	Vonatszam string `xml:"vonatszam,attr"`
 	Uic       string `xml:"uic,attr"`
 }
+
+func (m *Mozdony) GetCoords() []float64 {
+	lan, _ := strconv.Atoi(m.Lat)
+	lon, _ := strconv.Atoi(m.Lng)
+	return []float64{
+		float64(lan) / 1000000,
+		float64(lon) / 1000000,
+	}
+}
+
 type EmigResponse struct {
 	XMLName   xml.Name `xml:"response"`
 	Text      string   `xml:",chardata"`

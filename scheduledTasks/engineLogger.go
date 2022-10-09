@@ -5,12 +5,22 @@ import (
 	"github.com/d3n972/mavint/models"
 	"github.com/d3n972/mavint/models/db"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
+	"sort"
 	"strings"
 	"time"
 )
 
+func deg2rad(deg float64) float64 {
+	return deg * (math.Pi / 180)
+}
+func distanceMeters(lat1 float64, lon1 float64, lat2 float64, lon2 float64) float64 {
+	x := deg2rad(lon1-lon2) * math.Cos(deg2rad((lat1+lat2)/2))
+	y := deg2rad(lat1 - lat2)
+	return 6371000.0 * math.Sqrt(x*x+y*y)
+}
 func emig_getData() models.EmigResponse {
 	creds := models.NewEmigClient()
 	params := url.Values{}
@@ -70,14 +80,29 @@ func EngineLoggerTask() *Schedule {
 				).Find(&db.EngineWorkday{})
 				if tx.RowsAffected == 0 /*we don't have yet*/ {
 					logEntry := db.EngineWorkday{
-
 						UIC:         engine.Uic,
 						Date:        time.Now().Format("2006-01-02"),
 						JobType:     engine.Tipus,
 						TrainNumber: &engine.Vonatszam,
 					}
+					type k struct {
+						StationName string
+						Distance    float64
+					}
+					distances := []k{}
+					for _, stop := range ctx.Gtfs.Stops {
+						co := engine.GetCoords()
+						distances = append(distances, k{
+							StationName: stop.Name,
+							Distance:    distanceMeters(co[0], co[1], stop.Latitude, stop.Longitude),
+						})
+					}
+					sort.Slice(distances, func(i, j int) bool {
+						return distances[i].Distance < distances[j].Distance
+					})
 					logEntry.CreatedAt = time.Now().Local()
 					logEntry.UpdatedAt = time.Now().Local()
+					logEntry.NearestStation = &distances[0].StationName
 					ctx.Db.Save(&logEntry)
 				}
 			}
