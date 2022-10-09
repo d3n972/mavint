@@ -42,9 +42,10 @@ func (e *EngineDetailsController) getCountsForDay(ctx *gin.Context) ([]internal_
 }
 
 type resfmt struct {
-	JobType     string
-	TrainNumber string
-	LoggedAt    time.Time
+	JobType        string
+	TrainNumber    string
+	NearestStation string
+	LoggedAt       time.Time
 }
 
 func (e *EngineDetailsController) GetDetailsByDayAndUIC(ctx *gin.Context) ([]resfmt, error) {
@@ -53,12 +54,12 @@ func (e *EngineDetailsController) GetDetailsByDayAndUIC(ctx *gin.Context) ([]res
 		if r, e := appCtx.(scheduledTasks.AppContext).
 			Db.Model(&db.EngineWorkday{}).
 			Where("ui_c=? AND date=?", ctx.Param("uic"), ctx.Param("date")).
-			Select("job_type, train_number,created_at").
+			Select("job_type, train_number,created_at,nearest_station").
 			Rows(); e == nil {
 			res := []resfmt{}
 			for r.Next() {
 				re := resfmt{}
-				r.Scan(&re.JobType, &re.TrainNumber, &re.LoggedAt)
+				r.Scan(&re.JobType, &re.TrainNumber, &re.LoggedAt, &re.NearestStation)
 				res = append(res, re)
 			}
 			return res, nil
