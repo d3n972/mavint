@@ -120,6 +120,8 @@ func GetFuncMap() template.FuncMap {
 				return "euregio"
 			case "eurocity":
 				return "eurocity"
+			case "regional-express":
+				return "re"
 			}
 			return "szemelyvonat"
 		},
