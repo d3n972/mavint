@@ -120,7 +120,10 @@ func GetFuncMap() template.FuncMap {
 				return "euregio"
 			case "eurocity":
 				return "eurocity"
+			case "ice":
+				return "ice"
 			}
+			fmt.Printf("[UNK] %s\n", t)
 			return "szemelyvonat"
 		},
 		"toTrainType": func(t string) string {

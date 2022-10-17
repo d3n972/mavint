@@ -56,12 +56,13 @@ func main() {
 		appCtx.Gtfs = g
 	}
 	schedRunner := scheduledTasks.NewTaskRunner()
-	//schedRunner.AddTask("redisTask", scheduledTasks.GetRedisTask())
 	schedRunner.AddTask("havariaUpdaterTask", scheduledTasks.HavarianUpdaterTask())
 	schedRunner.AddTask("trainWatchTask", scheduledTasks.WatchTrainsTask())
 	schedRunner.AddTask("EngineLoggerTask", scheduledTasks.EngineLoggerTask())
 	schedRunner.AddTask("GTFSUpdaterTask", scheduledTasks.GTFSUpdaterTask())
-
+	schedRunner.AddTask("VPEUpdaterTask", scheduledTasks.VPELoggerTask())
+	y := scheduledTasks.VPELoggerTask()
+	go y.Handler(appCtx)
 	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
 

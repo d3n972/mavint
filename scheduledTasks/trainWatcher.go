@@ -44,13 +44,13 @@ func WatchTrainsTask() *Schedule {
 			time.LoadLocation("UTC")
 			R := ctx.Redis
 			if R.Exists(context.TODO(), "havariaCache").Val() != 0 {
-				fmt.Println("we have havaria")
+				fmt.Println("we have havaria\n")
 				hc := models.HavariaCache{}
 				cacheObject, _ := R.Get(context.TODO(), "havariaCache").Bytes()
 				json.Unmarshal(cacheObject, &hc)
 				trains := []db.WatchedTrain{}
 				ctx.Db.Find(&trains, "watch_until >= ?", time.Now().UTC().Format(time.RFC3339))
-				fmt.Printf("trains: %+v", trains)
+				fmt.Printf("trains: %+v\n", trains)
 				for _, train := range trains {
 					fmt.Printf("R.Exists(context.TODO(), \"trainwatch:delay:\"+train.TrainID).Val(): %v", R.Exists(context.TODO(), "trainwatch:delay:"+train.TrainID).Val())
 					if R.Exists(context.TODO(), "trainwatch:delay:"+train.TrainID).Val() > 0 {
