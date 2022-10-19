@@ -12,11 +12,13 @@ import (
 	"github.com/d3n972/mavint/services"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	redis "github.com/go-redis/redis/v9"
 	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 //go:embed assets/*
@@ -27,9 +29,28 @@ var Templates embed.FS
 
 //go:embed public/*
 var pwaManifest embed.FS
+var gt_dsn string
 
-func globalRecover(c *gin.Context) {
-	defer services.PanicHandler(c, nil)
+func globalRecover(c *gin.Context, err any) {
+	if os.Getenv("GIN_MODE") != "release" {
+		gt_dsn = "https://b622fdae7cdc49d3a036234ac3d0dfeb@gt.d3n.it/2"
+	} else {
+		gt_dsn = "https://c8d19ca3e2214dda92fd358c2d853029@gt.d3n.it/1"
+	}
+	sentry.Init(sentry.ClientOptions{
+		Dsn:     gt_dsn,
+		Release: services.GIT_VERSION,
+	})
+	recovered := recover()
+	if recovered != nil {
+		sentry.CaptureException(recovered.(error))
+	}
+	if err != nil {
+		sentry.CaptureException(err.(error))
+	}
+	if flusherr := sentry.Flush(2 * time.Second); !flusherr {
+		panic("failed to log")
+	}
 	c.Next()
 }
 func embeddedFH(config goview.Config, tmpl string) (string, error) {
@@ -70,10 +91,10 @@ func main() {
 	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
 
-	r := gin.Default()
+	r := gin.New()
 	r.TrustedPlatform = gin.PlatformCloudflare
 	r.Use(gin.Logger())
-	r.Use(globalRecover)
+	r.Use(gin.CustomRecovery(globalRecover))
 
 	r.Use(func(ctx *gin.Context) {
 		ctx.Set("cache", appCtx.Redis)

@@ -59,19 +59,13 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 		payloadBytes, err := json.Marshal(data)
 		fmt.Printf("payloadBytes: %v\n", string(payloadBytes))
 		if err != nil {
-			services.PanicHandler(ctx, gin.H{
-				"error":   err,
-				"payload": data,
-			})
+			panic(err)
 		}
 		body := bytes.NewReader(payloadBytes)
 
 		req, err := http.NewRequest("POST", "https://jegy-a.mav.hu/IK_API_PROD/api/InformationApi/GetTimetable", body)
 		if err != nil {
-			services.PanicHandler(ctx, gin.H{
-				"error":   err,
-				"payload": data,
-			})
+			panic(err)
 		}
 		req.Header.Set("Accept", "application/json, text/plain, */*")
 		req.Header.Set("Accept-Language", "en-US,en-GB;q=0.9,en;q=0.8,hu-HU;q=0.7,hu;q=0.6")
@@ -93,10 +87,7 @@ func (c *TrainDetailsController) getApiResponse(ctx *gin.Context) []byte {
 
 		resp, err := http.DefaultClient.Do(req)
 		if err != nil {
-			services.PanicHandler(ctx, gin.H{
-				"error":   err,
-				"payload": data,
-			})
+			panic(err)
 		}
 		defer resp.Body.Close()
 		res, _ := io.ReadAll(resp.Body)
@@ -142,7 +133,7 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 		"selectedTrainID": train.Train.TrainID,
 		"trid":            ctx.Query("train"),
 		"engineUIC":       engine.UIC,
-		"currDate":		time.Now().Format("2006-01-02"),
+		"currDate":        time.Now().Format("2006-01-02"),
 		"trains":          instance.TrainSchedulerDetails,
 		"numberOfTrains":  len(instance.TrainSchedulerDetails),
 	})

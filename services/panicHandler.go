@@ -31,7 +31,9 @@ func PanicHandler(c *gin.Context, plusdata any) {
 		})
 		if err, ok := rec.(error); ok {
 			sentry.CaptureException(err)
-			sentry.Flush(2 * time.Second)
+			if flusherr := sentry.Flush(2 * time.Second); !flusherr {
+				panic("")
+			}
 		} else {
 			panic("error is not type of error")
 		}
