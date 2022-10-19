@@ -15,10 +15,24 @@ import (
 	"time"
 )
 
+var gt_dsn string
+
 func PanicHandler(c *gin.Context, plusdata any) {
 	if rec := recover(); rec != nil {
-		sentry.CaptureException(rec.(error))
-		sentry.Flush(2 * time.Second)
+		if os.Getenv("GIN_MODE") != "release" {
+			gt_dsn = "https://b622fdae7cdc49d3a036234ac3d0dfeb@gt.d3n.it/2"
+		} else {
+			gt_dsn = "https://c8d19ca3e2214dda92fd358c2d853029@gt.d3n.it/1"
+		}
+		sentry.Init(sentry.ClientOptions{
+			Dsn: gt_dsn,
+		})
+		if err, ok := rec.(error); ok {
+			sentry.CaptureException(err)
+			sentry.Flush(2 * time.Second)
+		} else {
+			panic("error is not type of error")
+		}
 		// that recovery also handle XHR's
 		// you need handle it
 		if strings.ToLower(c.Request.Header.Get("X-Requested-With")) == "xmlhttprequest" {

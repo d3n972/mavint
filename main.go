@@ -12,7 +12,6 @@ import (
 	"github.com/d3n972/mavint/services"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
-	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	redis "github.com/go-redis/redis/v9"
 	"net/http"
@@ -38,6 +37,7 @@ func embeddedFH(config goview.Config, tmpl string) (string, error) {
 	bytes, err := Templates.ReadFile(path + config.Extension)
 	return string(bytes), err
 }
+
 func main() {
 	appCtx := scheduledTasks.AppContext{}
 	appCtx.Db = db.GetDbInstance()
@@ -45,10 +45,6 @@ func main() {
 		Addr:     "cache:6379",
 		Password: "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", // no password set
 		DB:       0,                                  // use default DB
-	})
-
-	sentry.Init(sentry.ClientOptions{
-		Dsn: "https://c8d19ca3e2214dda92fd358c2d853029@gt.d3n.it/1",
 	})
 
 	// Since sentry emits events in the background we need to make sure
