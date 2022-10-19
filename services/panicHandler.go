@@ -16,6 +16,7 @@ import (
 )
 
 var gt_dsn string
+var GIT_VERSION string = "DEVELOP"
 
 func PanicHandler(c *gin.Context, plusdata any) {
 	if rec := recover(); rec != nil {
@@ -25,7 +26,8 @@ func PanicHandler(c *gin.Context, plusdata any) {
 			gt_dsn = "https://c8d19ca3e2214dda92fd358c2d853029@gt.d3n.it/1"
 		}
 		sentry.Init(sentry.ClientOptions{
-			Dsn: gt_dsn,
+			Dsn:     gt_dsn,
+			Release: GIT_VERSION,
 		})
 		if err, ok := rec.(error); ok {
 			sentry.CaptureException(err)
