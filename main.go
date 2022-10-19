@@ -9,7 +9,6 @@ import (
 	"github.com/d3n972/mavint/db"
 	M "github.com/d3n972/mavint/models/db"
 	"github.com/d3n972/mavint/scheduledTasks"
-	"github.com/d3n972/mavint/services"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/getsentry/sentry-go"
@@ -18,6 +17,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"time"
 )
 
@@ -39,7 +39,7 @@ func globalRecover(c *gin.Context, err any) {
 	}
 	sentry.Init(sentry.ClientOptions{
 		Dsn:     gt_dsn,
-		Release: services.GIT_VERSION,
+		Release: Commit,
 	})
 	recovered := recover()
 	if recovered != nil {
@@ -47,6 +47,7 @@ func globalRecover(c *gin.Context, err any) {
 	}
 	if err != nil {
 		sentry.CaptureException(err.(error))
+
 	}
 	if flusherr := sentry.Flush(2 * time.Second); !flusherr {
 		panic("failed to log")
@@ -58,6 +59,17 @@ func embeddedFH(config goview.Config, tmpl string) (string, error) {
 	bytes, err := Templates.ReadFile(path + config.Extension)
 	return string(bytes), err
 }
+
+var Commit = func() string {
+	if info, ok := debug.ReadBuildInfo(); ok {
+		for _, setting := range info.Settings {
+			if setting.Key == "vcs.revision" {
+				return setting.Value
+			}
+		}
+	}
+	return "develop"
+}()
 
 func main() {
 	appCtx := scheduledTasks.AppContext{}
