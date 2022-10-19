@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	"io"
 	"net/http"
@@ -16,6 +17,8 @@ import (
 
 func PanicHandler(c *gin.Context, plusdata any) {
 	if rec := recover(); rec != nil {
+		sentry.CaptureException(rec.(error))
+		sentry.Flush(2 * time.Second)
 		// that recovery also handle XHR's
 		// you need handle it
 		if strings.ToLower(c.Request.Header.Get("X-Requested-With")) == "xmlhttprequest" {

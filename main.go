@@ -12,9 +12,9 @@ import (
 	"github.com/d3n972/mavint/services"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
+	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	redis "github.com/go-redis/redis/v9"
-
 	"net/http"
 	"os"
 	"path/filepath"
@@ -46,6 +46,14 @@ func main() {
 		Password: "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", // no password set
 		DB:       0,                                  // use default DB
 	})
+
+	sentry.Init(sentry.ClientOptions{
+		Dsn: "https://c8d19ca3e2214dda92fd358c2d853029@gt.d3n.it/1",
+	})
+
+	// Since sentry emits events in the background we need to make sure
+	// they are sent before we shut down
+
 	//load gtfs
 	if g, err := gtfs.Load("/var/lib/gtfs", nil); err != nil {
 		y := scheduledTasks.GTFSUpdaterTask()
@@ -146,7 +154,7 @@ func main() {
 		})
 	})
 
-	appCtx.Db.AutoMigrate(&M.WatchedTrain{})
+	appCtx.Db.AutoMigrate(M.WatchedTrain{})
 
 	r.Run(":12700") // listen and serve on 0.0.0.0:12700
 }
