@@ -1,0 +1,162 @@
+{{define "title"}}Home{{end}}
+{{define "container"}}container-fluid {{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent"}}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+          integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+          crossorigin=""/>
+    <style>
+        html, body, .container /*, and all other map parent selectors*/
+        {
+            height: 100%;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .vh-85 {
+            height: 89vh !important;
+        }
+
+        #map {
+            /* width: auto;*/
+            height: 100%;
+        }
+
+        .icon-train {
+            /*background-color: green;*/
+        }
+
+    </style>
+{{end}}
+{{define "footerContent"}}
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+            integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+            crossorigin=""></script>
+    <script src="/public/assets/js/TileLayer.Grayscale.js"></script>
+    <script>
+        window.markerLayer = {}
+        window.typeMap = []
+        window.typeMap["0117"] = "Bz"
+        window.typeMap["0414"] = "BDVmot[Hernyó]"
+        window.typeMap["0418"] = "Csörgő"
+        window.typeMap["0424"] = "BVhmot[Kis Samu]"
+        window.typeMap["0434"] = "BVmot[Samu]"
+        window.typeMap["0431"] = "Szili"
+        window.typeMap["0432"] = "Szili"
+        window.typeMap["0433"] = "Szili"
+        window.typeMap["0438"] = "Kis Dacia"
+        window.typeMap["0448"] = "Bobó"
+        window.typeMap["0460"] = "Szöcske"
+        window.typeMap["0470"] = "Taurus"
+        window.typeMap["0478"] = "Dacia"
+        window.typeMap["0480"] = "Traxx"
+        window.typeMap["0618"] = "Nohab"
+        window.typeMap["0628"] = "Szergej"
+        window.typeMap["0630"] = "Gigant"
+        window.typeMap["1415"] = "Flirt"
+        window.typeMap["1416"] = "Uzsgyi"
+        window.typeMap["1425"] = "Talent"
+        window.typeMap["1426"] = "Desiro"
+        window.typeMap["1815"] = "KISS"
+        window.typeMap["8005"] = "M41/43x/BDVmot/BVmot/BVhmot vezérlő"
+
+
+        $(document).ready(_ => {
+            $("#maincontainer")[0].classList.remove("container")
+            $("#maincontainer")[0].classList.add("container-fluid")
+
+            window.Lmap = L.map('map').setView([47.4979, 19.0402], 13);
+
+
+            /* function onLocationError*/
+            window.Lmap.on('locationfound', (e) => {
+            })
+            window.Lmap.on('locationerror', (e) => {
+                window.Lmap.setView([47.4979, 19.0402], 13)
+                console.log("no gps")
+            });
+            window.Lmap.locate({setView: true, maxZoom: 13});
+            L.tileLayer.grayscale('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '© OpenStreetMap'
+            }).addTo(window.Lmap);
+            var openrailwaymap = new L.TileLayer('http://{s}.tiles.openrailwaymap.org/maxspeed/{z}/{x}/{y}.png',
+                {
+                    attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>, Style: <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA 2.0</a> <a href="http://www.openrailwaymap.org/">OpenRailwayMap</a> and OpenStreetMap',
+                    minZoom: 2,
+                    maxZoom: 19,
+                    tileSize: 256
+                }).addTo(window.Lmap);
+        })
+        window.markerLayer = L.layerGroup([])
+        refreshData()
+
+        function refreshData() {
+            fetch('/map/getdata').then(r => r.json())
+                .then(r => {
+                    let markers = [];
+                    r.Train.forEach(e => {
+                        let bgColor = "";
+                        if (e['@Delay'] === 0.0) {
+                            bgColor = "#99ffdd";
+                        } else if (e['@Delay'] > 0.0 && e['@Delay'] <= 2.0) {
+                            bgColor = "#009f7b";
+                        } else if (e['@Delay'] > 2.0 && e['@Delay'] <= 5.0) {
+                            bgColor = "#2dc73b";
+                        } else if (e['@Delay'] > 5.0 && e['@Delay'] <= 10.0) {
+                            bgColor = "#b3de07";
+                        } else if (e['@Delay'] > 10.0 && e['@Delay'] <= 20.0) {
+                            bgColor = "#eed202";
+                        } else if (e['@Delay'] > 20.0 && e['@Delay'] <= 30.0) {
+                            bgColor = "#cea104";
+                        } else if (e['@Delay'] > 30.0 && e['@Delay'] <= 40.0) {
+                            bgColor = "#c57f07";
+                        } else if (e['@Delay'] > 40.0 && e['@Delay'] <= 50.0) {
+                            bgColor = "#c1570b";
+                        } else if (e['@Delay'] > 50.0 && e['@Delay'] <= 60.0) {
+                            bgColor = "#b6100a";
+                        } else {
+                            bgColor = "#6e0e0a";
+                        }
+                        if (/EMIG/.exec(e['@ElviraID']) == null) {
+                            markers.push(L.marker([e['@Lat'], e['@Lon']], {
+                                icon: L.divIcon({
+                                    className: 'icon-train',
+                                    iconSize: [55, 15],
+                                    html: `<div class="align-items-center d-flex" style="flex-direction: column; background-color: ${bgColor};">
+    <span class="align-content-between d-flex" style='font-weight:700;'>${e['@TrainNumber'].replace(/^(36|43|55)/g, '')}</span>
+</div>`
+                                }),
+                            }).bindPopup(`<a href="/m?tid=${e['@TrainNumber'].replace(/^(36|43|55)/g, '')}">${e['@Delay'] + ' ' + e['@Relation']}`))
+                        } else {
+                            typeCode = e['@TrainNumber']
+                            markers.push(L.marker([e['@Lat'], e['@Lon']], {
+                                icon: L.divIcon({
+                                    className: 'icon-train',
+                                    iconSize: [55, 15],
+                                    html: `<div class="align-items-center d-flex" style="flex-direction: column; background-color: #88c7dc;width: 17ch">
+    <span class="align-content-between d-flex" style='font-weight:700;'>${e['@TrainNumber'].replace(/^(36|43|55)/g, '')}</a></span>
+</div>`
+                                }),
+                            }).bindPopup(`${window.typeMap[e['@Line'].split(" ")[2]] + ' '}<a href="/ed/${(new Date()).toJSON().split('T')[0]}/${e['@Relation']}">${e['@TrainNumber']}</a>`))
+                        }
+                    })
+                    let oldLayer = window.markerLayer
+                    window.markerLayer = L.layerGroup(markers)
+                    window.markerLayer.addTo(window.Lmap)
+                    window.Lmap.removeLayer(oldLayer)
+
+
+                })
+        }
+
+        setInterval(function () {
+            refreshData()
+        }, 5000)
+    </script>
+{{end}}
+
+{{define "main" }}
+    <div id="map" class="vh-85"></div>
+
+{{end}}

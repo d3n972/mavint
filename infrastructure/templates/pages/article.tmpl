@@ -1,0 +1,14 @@
+{{define "title"}}Home{{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent"}}{{end}}
+{{define "footerContent"}}{{end}}
+{{define "main"}}
+    <div class="d-flex">
+        <img class="mx-auto" src="https://www.mavcsoport.hu/sites/all/themes/mav/images/logo.png" alt="mav_logo">
+    </div>
+    <h2>{{.title}}</h2>
+    <h6 class="text-decoration-underline">{{.pub}}</h6>
+    {{range $x,$l := .content}}
+        <p>{{$l}}</p>
+    {{end}}
+{{end}}

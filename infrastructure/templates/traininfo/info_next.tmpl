@@ -1,0 +1,179 @@
+{{define "title"}}Train info{{end}}
+
+{{define "file" }}traininfo{{end}}
+{{define "headContent"}}
+    {{if gt .numberOfTrains 1}}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"/>
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css"/>
+    {{end}}
+{{end}}
+
+{{define "footerContent"}}
+    {{if gt .numberOfTrains 1}}
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+        <script>
+            $(document).ready(_ => {
+                $('select').select2({
+                    theme: 'bootstrap-5',
+                    width: '80%',
+                });
+            })
+        </script>
+    {{end}}
+{{end}}
+
+{{define "main" }}
+    {{if gt .numberOfTrains 1}}
+        <div class="float-md-end slct1">
+            <form action="#" method="get" class="d-flex gap-2">
+                <input type="hidden" name="tid" id="tid" value="{{.tid}}">
+                <select name="train" id="train" class="">
+                    {{range $x, $train := .trains}}
+                        <option value="{{$train.Train.TrainID}}">
+                            {{$train.Train.Code}} {{$train.Train.GetFullShortType}} {{$train.Train.GetName}}
+                            ({{$train.Train.StartStation.Name}} -> {{$train.Train.EndStation.Name}})
+                        </option>
+                    {{end}}
+                </select>
+                <input role="button" class="btn btn-success" type="submit" value="Show">
+            </form>
+        </div>
+    {{end}}
+    <div class="d-inline-block row">
+        <div class="d-flex">
+            {{if  .info.Train.ViszonylatiJel.Jel}}
+                <div class="d-flex" style="
+                        border-radius: 4px;
+                        ">
+
+                    <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                         style="
+                                border-radius: 3px;
+                                 margin-right:1ch;
+               ">
+                         <span style="font-family: MNR;font-size:3ch;
+                                 color: #{{ .info.Train.ViszonylatiJel.FontSzinKod}};
+                                 ">
+                                        {{ .info.Train.ViszonylatiJel.Sign.Character}}
+                                    </span>
+                    </div>
+                </div>
+
+            {{else}}
+                <div class="d-flex" style="
+                        padding: 2px 5px;
+                        border-radius: 4px;
+                        color: #{{.info.Train.Kind.BackgroundColorCode}};
+                        ">
+
+                    <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                         style="
+                                 margin: 2px;
+                                 border-radius: 3px;
+                                 padding: 5px;
+                                 margin-right:1ch;
+                                 width: 4ch;
+                                 fill: #FFFFFF;
+                                 border: 1px solid #{{.info.Train.Kind.ForegroundColorCode}};
+                                 background-color:#{{.info.Train.Kind.ForegroundColorCode}}
+
+
+                                 ">
+                        <svg style="height: 12px; width:24px; ">
+                            <use href="/public/assets/trainclasses.svg#icon-train-{{.info.Train.FullType|toIconName}}"/>
+                        </svg>
+                    </div>
+                </div>
+            {{end}}
+            <h3 class="my-auto">{{.info.Train.FullName}} </h3>
+        </div>
+        <h4>{{.info.Train.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{.info.Train.EndStation.Name}}</h4>
+        {{if ne .engineUIC ""}}
+            <h6>Mozdony: <a href="/ed/{{.currDate}}/{{.engineUIC}}"><code>{{.engineUIC|UIC}}</code></a></h6>
+        {{end}}
+    </div>
+    {{ if .info.Train.HavarianInfok.AktualisKeses}}
+        <div class="alert alert-danger" role="alert">
+            <p>Késés: {{.info.Train.HavarianInfok.AktualisKeses}} perc</p>
+            <p>{{.info.Train.HavarianInfok.KesesiOk}}</p>
+            <p>{{.info| delayReasons}}</p>
+        </div>
+    {{end}}
+    <h5 style="font-family:MNR;font-size: 3ch;">
+        {{ range $x, $svc := .info.Train.Services}}
+            <span onclick="alert('{{$svc.Description}}')" title="{{$svc.Description}}"
+                  class="mx-2">{{$svc.Sign.Character}}</span>
+        {{ end }}
+    </h5>
+    <div class="vstack">
+        {{ range $x, $value := .info.Scheduler }}
+            <div
+                    class="border border-1 p-3 rounded-1"
+                    style="
+                            background-color: {{($value | timediffMins)|getCSSByDelay}};
+                            ">
+                <div class="gap-3 hstack">
+                    <div class="col-auto col-md-1">
+                        <div class="gap-1 hstack">
+                            <div class="col-6">
+                                {{ if ne (loctime $value.Arrive) "" }}
+                                    {{$value.Arrive | loctime}}
+                                {{end}}
+                            </div>
+                            <div class="col-6">
+                                {{ if ne (loctime $value.ActualOrEstimatedArrive) "" }}
+
+                                    {{if $value.ActualOrEstimatedArrive | isTrainDeparted}}
+                                        <span class="text-decoration-line-through">
+                                    {{end}}
+                                    {{$value.ActualOrEstimatedArrive | loctime}}
+                                    {{if $value.ActualOrEstimatedArrive | isTrainDeparted}}
+                                        </span>
+                                    {{end}}
+                                {{end}}</div>
+                        </div>
+                        <div class="gap-1 hstack">
+                            <div class="col-6">
+                                {{ if ne (loctime $value.Start) "" }}
+                                    {{$value.Start | loctime}}
+                                {{end}}
+                            </div>
+                            <div class="col-6">
+                                {{ if ne (loctime $value.ActualOrEstimatedStart) "" }}
+                                    {{if $value.ActualOrEstimatedStart | isTrainDeparted}}
+                                        <span class="text-decoration-line-through">
+                                    {{end}}
+                                    {{$value.ActualOrEstimatedStart | loctime}}
+                                    {{if $value.ActualOrEstimatedStart | isTrainDeparted}}
+                                        </span>
+                                    {{end}}
+                                {{end}}</div>
+                        </div>
+
+                    </div>
+                    <div class="align-items-center col d-flex gap-2">
+                        <strong>{{$value.Station.Name}}{{if ne $value.Station.CountryIso "HU"}}, {{$value.Station.Country}}{{end}}
+                        </strong>
+                        <div class="d-inline float-end">
+                            {{ range $x, $svc := $value.Services}}
+                                <span class="mnr" onclick="alert('{{$svc.Description}}')" title="{{$svc.Description}}"
+                                      class="mx-2">{{$svc.Sign.Character}}</span>
+                            {{ end }}
+                        </div>
+                    </div>
+                    <div class="align-items-center col-1 d-flex me-2"
+                         onclick="ShowSpinner();document.location='/station/{{$value.Station.Code}}'">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
+                </div>
+
+            </div>
+        {{end}}
+        <div class="vstack my-3">
+            <a role="button" class="btn btn-success" href="/esd?tid={{.tid}}&train={{.trid}}">ESD formátum</a>
+        </div>
+    </div>
+{{end}}

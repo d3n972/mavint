@@ -1,0 +1,38 @@
+{{template "_base.tmpl" .}}
+{{define "title"}}Home{{end}}
+
+{{define "main" }}
+
+<ul class="list-group">
+
+    {{ range $x, $value := .w }}
+    <pre>
+    {{.w}}
+    </pre>
+       <li 
+       class="list-group-item"
+       > 
+        <div class="d-flex" style="
+        padding: 2px 5px;
+        border-radius: 4px;
+        color: #{{$value.Kind.BackgroundColorCode}};
+    ">
+        <div
+            class="align-items-center d-flex flex-shrink-0 justify-content-center"
+            style="
+            margin: 2px;
+            border-radius: 3px;
+            padding: 5px;
+            width: 4ch;
+            fill: #{{$value.Kind.BackgroundColorCode}};
+            border: 1px solid #{{$value.Kind.BackgroundColorCode}};
+            background-color:#{{$value.Kind.ForegroundColorCode}}
+        ">
+        <svg style="height: 12px; width:24px;">
+            <use href="#icon-train-{{$value.FullType|toIconName}}"/>
+        </svg>
+        </div>  {{$value.FullShortType|toTrainType}}{{ $value.FullName }} {{$value.StartStation.Name}} {{$value.Start|loctime}}  -> {{$value.EndStation.Name}} {{$value.Arrive}}
+       </li>
+    {{ end }}
+</ul>
+{{end}}

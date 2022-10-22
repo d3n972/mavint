@@ -1,0 +1,230 @@
+{{define "title"}}Home{{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent" }}
+<style>
+    [data-href] {
+        cursor: pointer;
+    }
+
+    .mnr {
+        font-family: MNR;
+        font-size: 1em;
+    }
+
+    .icon {
+        font-size: 1.5em;
+    }
+
+    .text-bold {
+        font-weight: 700;
+    }
+    .bi-chevron-right{
+        font-size: 3ch;
+    }
+</style>
+{{end}}
+{{define "footerContent" }}
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.0/dist/jquery.min.js"></script>
+<script>
+    $("table").on('click-row.bs.table', function (e, row, $element) {
+        window.location = $element.data('href');
+    });</script>
+{{end}}
+
+{{define "main" }}
+<h4>{{.station.Station.Name}}</h4>
+<h6 class="mnr icon">
+    {{range $y,$svc:=.station.Services}}
+    <span title="{{$svc.Description}}" onclick="alert('{{$svc.Description}}')">{{$svc.Sign.Character}}</span>
+    {{end}}
+</h6>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button"
+            role="tab" aria-controls="profile-tab-pane" aria-selected="false">Departure
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link " id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button"
+            role="tab" aria-controls="home-tab-pane" aria-selected="true">Arrival
+        </button>
+    </li>
+   
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+        <div class="">
+            {{$havinfo := .delays}}
+            {{ range $x, $value := .arrival }}
+
+                <div style="
+                {{$idx := $value.GetCode}}
+                {{ with (index $havinfo $idx) }}
+                    {{if $havinfo.HasEntry $idx}}
+                        {{ if (iDelayInRange .Time 0.0 1.0) }}
+                            background-color:  #68C646;
+                        {{else if (iDelayInRange .Time 1.0 3.0) }}
+                            background-color:  #ABCC24;
+                        {{else if (iDelayInRange .Time 3.0 5.0) }}
+                            background-color: #EED202;
+                        {{else if (iDelayInRange .Time 5.0 8.0) }}
+                            background-color: #D57f0e;
+                        {{else if (iDelayInRange .Time 8.0 15.0) }}
+                            background-color: #c95614;
+                        {{else if (iDelayInRange .Time 15.0 2000.0) }}
+                            background-color:  #BC2C1A;
+                                    color: white;
+                        {{ end }}
+                    {{end}}
+                {{end}};">
+                    <div class="border d-flex p-2" >
+                        <div class="col">
+                            <div class="d-flex gap-3 text-bold">
+                                <div class="d-flex flex-column">
+                                    {{if $value.ActualOrEstimatedArrive}}
+                                        {{$value.ActualOrEstimatedArrive | loctime}}
+                                    {{else}}
+                                        {{$value.Arrive | loctime}}
+                                    {{end}}
+                                    {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
+                                        <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} p)</small>
+                                    {{end}}
+                                </div>
+                                <div>
+                                    {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
+                                </div>
+
+                            </div>
+                            <div class="d-flex align-self-center align-items-center">
+                                {{if $value.ViszonylatiJel.Sign.Character}}
+                                    <span class="align-middle icon mnr"
+                                          style=" color: #{{$value.ViszonylatiJel.FontSzinKod}};">{{$value.ViszonylatiJel.Sign.Character}}</span>
+
+                                {{else}}
+                        <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                            style="
+                   margin: 2px;
+                   max-height: 2ch;
+                   border-radius: 3px;
+                   padding: 5px;
+                   margin-right:1ch;
+                   width: 4ch;
+           {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
+               fill: #{{$value.ViszonylatiJel.HatterSzinKod}};
+               border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+               background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
+           {{else}}
+               fill: #{{$value.Kind.BackgroundColorCode}};
+               border: 1px solid #{{$value.Kind.ForegroundColorCode}};
+               background-color:#{{$value.Kind.ForegroundColorCode}}
+           {{end}}">
+
+                            <svg style="height: 12px; width:24px; ">
+                                <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}" />
+                            </svg>
+                        </div>
+                        {{end}}
+                                <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName
+                                    }}</span>
+                                <span class="mnr ms-3">
+                            {{$value|getServiceIcons}}
+                        </span>
+                            </div>
+                        </div>
+                        <div class="align-items-center col-1 d-flex me-2" onclick="ShowSpinner();document.location='/m?tid={{$value.Code}}'">
+                            <i class="bi bi-chevron-right"></i>
+                        </div>
+                    </div>
+                </div>
+            {{end}}
+        </div>
+
+    </div>
+    <div class="tab-pane fade  show active" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+        <div class="">
+            {{$havinfo := .delays}}
+            {{ range $x, $value := .departure }}
+            <div style="
+            {{$idx := $value.GetCode}}
+            {{ with (index $havinfo $idx) }}
+            {{if $havinfo.HasEntry $idx}}
+             {{ if (iDelayInRange .Time 0.0 1.0) }}
+             background-color:  #68C646;
+            {{else if (iDelayInRange .Time 1.0 3.0) }}
+            background-color:  #ABCC24;
+            {{else if (iDelayInRange .Time 3.0 5.0) }}
+            background-color: #EED202;
+            {{else if (iDelayInRange .Time 5.0 8.0) }}
+            background-color: #D57f0e;
+            {{else if (iDelayInRange .Time 8.0 15.0) }}
+            background-color: #c95614;
+            {{else if (iDelayInRange .Time 15.0 2000.0) }}
+            background-color:  #BC2C1A;
+            color: white;
+             {{ end }}
+             {{end}}
+             {{end}};">
+                <div class="border d-flex p-2" >
+                    <div class="col">
+                        <div class="d-flex gap-3 text-bold">
+                            <div class="d-flex flex-column">
+                                {{if $value.ActualOrEstimatedStart}}
+                                    {{$value.ActualOrEstimatedStart | loctime}}
+                                {{else}}
+                                    {{$value.Start | loctime}}
+                                {{end}}
+                                {{if gt $value.HavarianInfok.AktualisKeses 0.0}}
+                                    <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} p)</small>
+                                {{end}}
+                            </div>
+                            <div>
+                                {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
+                            </div>
+
+                        </div>
+                        <div class="d-flex align-self-center align-items-center">
+                            {{if $value.ViszonylatiJel.Sign.Character}}
+                                <span class="align-middle icon mnr"
+                                      style=" color: #{{$value.ViszonylatiJel.FontSzinKod}};">{{$value.ViszonylatiJel.Sign.Character}}</span>
+
+                            {{else}}
+                        <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                            style="
+                   margin: 2px;
+                   max-height: 2ch;
+                   border-radius: 3px;
+                   padding: 5px;
+                   margin-right:1ch;
+                   width: 4ch;
+           {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
+               fill: #{{$value.ViszonylatiJel.HatterSzinKod}};
+               border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+               background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
+           {{else}}
+               fill: #{{$value.Kind.BackgroundColorCode}};
+               border: 1px solid #{{$value.Kind.ForegroundColorCode}};
+               background-color:#{{$value.Kind.ForegroundColorCode}}
+           {{end}}">
+
+                            <svg style="height: 12px; width:24px; ">
+                                <use href="/public/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}" />
+                            </svg>
+                        </div>
+                        {{end}}
+                            <span class="{{if $value.ViszonylatiJel.Sign.Character}}ms-2{{end}}">{{ $value|getTrainName
+                                }}</span>
+                            <span class="mnr ms-3">
+                            {{$value|getServiceIcons}}
+                        </span>
+                        </div>
+                    </div>
+                    <div class="align-items-center col-1 d-flex me-2" onclick="ShowSpinner();document.location='/m?tid={{$value.Code}}'">
+                        <i class="bi bi-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}
