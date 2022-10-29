@@ -2,10 +2,10 @@ package auth
 
 import "errors"
 
-var ErrorWrongPassword = errors.New("Wrong password")
-var ErrorWrongUsername = errors.New("Wrong password")
-var ErrorUserNotFound = errors.New("Wrong password")
-var ErrorUserNotInitialized = errors.New("User instance is not initialized")
+var ErrorWrongPassword = errors.New("wrong password")
+var ErrorWrongUsername = errors.New("wrong username")
+var ErrorUserNotFound = errors.New("user not found")
+var ErrorUserNotInitialized = errors.New("user instance is not initialized")
 
 var BCryptCost = 51200
 

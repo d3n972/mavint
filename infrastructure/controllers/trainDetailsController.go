@@ -126,13 +126,13 @@ func (c *TrainDetailsController) Render(ctx *gin.Context) {
 	ed := services.EngineDiscovery{}
 	appctx, _ := ctx.Get("appctx")
 	engine, _ := ed.FindByTrainNumber(context.WithValue(context.Background(), "db", appctx.(domain.AppContext).Db), train.Train.Code)
-
+	_ = engine
 	ctx.HTML(http.StatusOK, "traininfo/info_next", gin.H{
 		"info":            train,
 		"tid":             ctx.Query("tid"),
 		"selectedTrainID": train.Train.TrainID,
 		"trid":            ctx.Query("train"),
-		"engineUIC":       engine.UIC,
+		"engineUIC":       "",
 		"currDate":        time.Now().Format("2006-01-02"),
 		"trains":          instance.TrainSchedulerDetails,
 		"numberOfTrains":  len(instance.TrainSchedulerDetails),

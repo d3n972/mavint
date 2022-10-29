@@ -1,10 +1,13 @@
 package scheduledTasks
 
 import (
+	"context"
 	"encoding/xml"
 	"github.com/d3n972/mavint/domain"
+	"github.com/d3n972/mavint/domain/dao"
 	"github.com/d3n972/mavint/domain/models"
 	models2 "github.com/d3n972/mavint/domain/models"
+	"github.com/d3n972/mavint/domain/repository"
 	"io"
 	"math"
 	"net/http"
@@ -31,14 +34,18 @@ func (e EngineLoggerTask) Handler(ctx domain.AppContext) {
 	ctx.Db.AutoMigrate(domain.EngineWorkday{})
 	emigData := e.emig_getData()
 	for _, engine := range emigData.Mozdonyok.Mozdony {
-		tx := ctx.Db.Where(
-			"ui_c = ? AND job_type = ? AND train_number = ? AND date = ?",
-			engine.Uic,
-			engine.Tipus,
-			engine.Vonatszam,
-			time.Now().Format("2006-01-02"),
-		).Find(&domain.EngineWorkday{})
-		if tx.RowsAffected == 0 /*we don't have yet*/ {
+		dbctx := context.WithValue(context.Background(), "db", ctx.Db)
+		repo := repository.NewRepository[dao.EngineWorkdayDAO,
+			domain.EngineWorkday](dbctx)
+		res, err := repo.Find(dbctx, repository.NewAndSpecification(
+			repository.NewEqualsSpecification("ui_c", engine.Uic),
+			repository.NewEqualsSpecification("job_type", engine.Tipus),
+			repository.NewEqualsSpecification("train_number", engine.Vonatszam),
+			repository.NewEqualsSpecification("date", time.Now().Format("2006-01-02")),
+		))
+		if err != nil {
+		}
+		if len(res) == 0 /*we don't have yet*/ {
 			logEntry := domain.EngineWorkday{
 				UIC:         engine.Uic,
 				Date:        time.Now().Format("2006-01-02"),
@@ -63,7 +70,7 @@ func (e EngineLoggerTask) Handler(ctx domain.AppContext) {
 			logEntry.CreatedAt = time.Now().Local()
 			logEntry.UpdatedAt = time.Now().Local()
 			logEntry.NearestStation = &distances[0].StationName
-			ctx.Db.Save(&logEntry)
+			repo.Insert(context.Background(), &logEntry)
 		}
 	}
 }

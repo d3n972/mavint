@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/d3n972/mavint/domain"
+	"github.com/d3n972/mavint/domain/dao"
 	"github.com/d3n972/mavint/domain/models"
+	"github.com/d3n972/mavint/domain/repository"
 	services2 "github.com/d3n972/mavint/infrastructure/services"
 	"strconv"
 	"strings"
@@ -26,11 +28,14 @@ func (t TrainWatchTask) Handler(ctx domain.AppContext) {
 		hc := models.HavariaCache{}
 		cacheObject, _ := R.Get(context.TODO(), "havariaCache").Bytes()
 		json.Unmarshal(cacheObject, &hc)
-		trains := []db.WatchedTrain{}
-		ctx.Db.Find(&trains, "watch_until >= ?", time.Now().UTC().Format(time.RFC3339))
-		fmt.Printf("trains: %+v\n", trains)
+		trains := []domain.WatchedTrain{}
+		repo := repository.NewRepository[dao.WatchedTrainDAO, domain.WatchedTrain](context.Background())
+		trains, err := repo.Find(context.Background(), repository.NewRelationSpecification(
+			"watch_until", repository.GreaterOrEq, time.Now().UTC().Format(time.RFC3339)))
+		if err != nil {
+			//log error
+		}
 		for _, train := range trains {
-			fmt.Printf("R.Exists(context.TODO(), \"trainwatch:delay:\"+train.TrainID).Val(): %v", R.Exists(context.TODO(), "trainwatch:delay:"+train.TrainID).Val())
 			if R.Exists(context.TODO(), "trainwatch:delay:"+train.TrainID).Val() > 0 {
 				oldDelay, _ := R.Get(context.TODO(), "trainwatch:delay:"+train.TrainID).Int()
 				fmt.Printf("oldDelay < hc[train.TrainID].Time: %v", oldDelay < hc[train.TrainID].Time)
@@ -46,7 +51,7 @@ func (t TrainWatchTask) Handler(ctx domain.AppContext) {
 	}
 	time.LoadLocation(_tz.String())
 }
-func (t TrainWatchTask) sendNotice(hc models.HavariaCache, train db.WatchedTrain) {
+func (t TrainWatchTask) sendNotice(hc models.HavariaCache, train domain.WatchedTrain) {
 	notificationService := services2.DiscordNotification{}
 	notificationService.Init(
 		&services2.Params{

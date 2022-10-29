@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/d3n972/mavint/application/auth"
 	"github.com/d3n972/mavint/domain"
+	"github.com/d3n972/mavint/infrastructure"
 	"github.com/d3n972/mavint/infrastructure/controllers"
 	"github.com/d3n972/mavint/infrastructure/db"
 	"github.com/foolin/goview"
@@ -117,10 +118,10 @@ func main() {
 	})
 	r.Use(auth.SessionMiddleware)
 	gvEngine := ginview.New(goview.Config{
-		Root:      "templates",
-		Extension: ".tmpl",
-		Master:    "layouts/master",
-		//Funcs:        GetFuncMap(),
+		Root:         "infrastructure/templates",
+		Extension:    ".tmpl",
+		Master:       "layouts/master",
+		Funcs:        infrastructure.GetFuncMap(),
 		DisableCache: true,
 		Delims:       goview.Delims{Left: "{{", Right: "}}"},
 	})
