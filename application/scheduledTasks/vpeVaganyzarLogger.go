@@ -1,10 +1,13 @@
 package scheduledTasks
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/d3n972/mavint/domain"
+	"github.com/d3n972/mavint/domain/dao"
 	"github.com/d3n972/mavint/domain/models"
+	"github.com/d3n972/mavint/domain/repository"
 	"io"
 	"net/http"
 	"strings"
@@ -71,10 +74,19 @@ func (v VPELoggerTask) Handler(ctx domain.AppContext) {
 			Status:    entry.StatuszKod,
 		}
 		c := int64(0)
-		ctx.Db.Find(&models.VPEEntry{}).Where("vpe_hash=?", entry.Hsh).Count(&c)
+		repo := repository.NewRepository[dao.VPEEntryDAO, models.VPEEntry](context.Background())
+		res, er := repo.Find(context.Background(),
+			repository.NewEqualsSpecification(
+				"vpe_hash", entry.Hsh,
+			),
+		)
+		if er != nil {
+			//todo: handle error case
+		}
+		c = int64(len(res))
 		if c == 0 {
 			fmt.Printf("[VPE] Saving: %s\n", entry.VpeAzonosito)
-			ctx.Db.Save(&record)
+			repo.Insert(context.Background(), &record)
 		}
 	}
 }

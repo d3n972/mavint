@@ -33,6 +33,14 @@ func (V VPEEntryDAO) FromEntity(e models.VPEEntry) repository.DAO[models.VPEEntr
 }
 
 func (V VPEEntryDAO) ToEntity() models.VPEEntry {
-	//TODO implement me
-	panic("implement me")
+	return models.VPEEntry{
+		VPEHash:   V.VPEHash,
+		From:      V.From,
+		Until:     V.Until,
+		Provider:  V.Provider,
+		VPEID:     V.VPEID,
+		EntryType: V.EntryType,
+		VPEName:   V.VPEName,
+		Status:    V.Status,
+	}
 }

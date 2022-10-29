@@ -16,11 +16,21 @@ type EngineWorkdayDAO struct {
 }
 
 func (e2 EngineWorkdayDAO) FromEntity(e domain.EngineWorkday) repository.DAO[domain.EngineWorkday] {
-	//TODO implement me
-	panic("implement me")
+	return EngineWorkdayDAO{
+		UIC:            e2.UIC,
+		Date:           e2.Date,
+		JobType:        e2.JobType,
+		TrainNumber:    e2.TrainNumber,
+		NearestStation: e2.NearestStation,
+	}
 }
 
 func (e2 EngineWorkdayDAO) ToEntity() domain.EngineWorkday {
-	//TODO implement me
-	panic("implement me")
+	return domain.EngineWorkday{
+		UIC:            e2.UIC,
+		Date:           e2.Date,
+		JobType:        e2.JobType,
+		TrainNumber:    e2.TrainNumber,
+		NearestStation: e2.NearestStation,
+	}
 }

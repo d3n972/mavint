@@ -3,18 +3,24 @@ package dao
 import (
 	"github.com/d3n972/mavint/domain"
 	"github.com/d3n972/mavint/domain/repository"
+	"time"
 )
 
 type WatchedTrainDAO struct {
-	__e domain.WatchedTrain
+	TrainID    string
+	WatchUntil time.Time
 }
 
 func (e2 WatchedTrainDAO) FromEntity(e domain.WatchedTrain) repository.DAO[domain.WatchedTrain] {
-	//TODO implement me
-	panic("implement me")
+	return WatchedTrainDAO{
+		TrainID:    e.TrainID,
+		WatchUntil: e.WatchUntil,
+	}
 }
 
 func (e2 WatchedTrainDAO) ToEntity() domain.WatchedTrain {
-	//TODO implement me
-	panic("implement me")
+	return domain.WatchedTrain{
+		TrainID:    e2.TrainID,
+		WatchUntil: e2.WatchUntil,
+	}
 }
