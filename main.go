@@ -3,7 +3,9 @@ package main
 import (
 	"embed"
 	"fmt"
+	"github.com/artonge/go-gtfs"
 	"github.com/d3n972/mavint/application/auth"
+	"github.com/d3n972/mavint/application/scheduledTasks"
 	"github.com/d3n972/mavint/domain"
 	"github.com/d3n972/mavint/infrastructure"
 	"github.com/d3n972/mavint/infrastructure/controllers"
@@ -86,7 +88,7 @@ func main() {
 	// they are sent before we shut down
 
 	//load gtfs
-	/*if g, err := gtfs.Load("/var/lib/gtfs", nil); err != nil {
+	if g, err := gtfs.Load("/var/lib/gtfs", nil); err != nil {
 		y := scheduledTasks.GTFSUpdaterTask()
 		y.Handler(appCtx)
 		g, _ := gtfs.Load("/var/lib/gtfs", nil)
@@ -104,7 +106,7 @@ func main() {
 	go y.Handler(appCtx)
 	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
-	*/
+
 	r := gin.New()
 	r.TrustedPlatform = gin.PlatformCloudflare
 	r.Use(gin.Logger())
