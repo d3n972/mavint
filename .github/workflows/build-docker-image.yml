@@ -14,7 +14,7 @@ on:
     branches: ['main']
 
 env:
-  REGISTRY: ghcr.io
+  REGISTRY: ${{ secrets.CR_HOST }}
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:        
@@ -32,8 +32,8 @@ jobs:
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.CR_USER }}
+          password: ${{ secrets.CR_PASSWORD }}
       - name: Remove old image
         run: |
           docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main

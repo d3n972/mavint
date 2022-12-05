@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
+	"text/template"
+	"time"
+
 	"github.com/d3n972/mavint/domain"
 	"github.com/d3n972/mavint/domain/dao"
 	"github.com/d3n972/mavint/domain/models"
 	"github.com/d3n972/mavint/domain/repository"
 	services2 "github.com/d3n972/mavint/infrastructure/services"
-	"strconv"
-	"strings"
-	"text/template"
-	"time"
 )
 
 type TrainWatchTask struct {
@@ -24,7 +25,7 @@ func (t TrainWatchTask) Handler(ctx domain.AppContext) {
 	time.LoadLocation("UTC")
 	R := ctx.Redis
 	if R.Exists(context.TODO(), "havariaCache").Val() != 0 {
-		fmt.Println("we have havaria\n")
+		fmt.Println("we have havaria")
 		hc := models.HavariaCache{}
 		cacheObject, _ := R.Get(context.TODO(), "havariaCache").Bytes()
 		json.Unmarshal(cacheObject, &hc)
