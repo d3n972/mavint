@@ -3,17 +3,17 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/artonge/go-gtfs"
-	"github.com/d3n972/mavint/auth"
-	"github.com/d3n972/mavint/controllers"
-	"github.com/d3n972/mavint/db"
-	M "github.com/d3n972/mavint/models/db"
-	"github.com/d3n972/mavint/scheduledTasks"
+	"github.com/d3n972/mavint/application/auth"
+	"github.com/d3n972/mavint/domain"
+	"github.com/d3n972/mavint/infrastructure"
+	"github.com/d3n972/mavint/infrastructure/controllers"
+	"github.com/d3n972/mavint/infrastructure/db"
 	"github.com/foolin/goview"
 	"github.com/foolin/goview/supports/ginview"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	redis "github.com/go-redis/redis/v9"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -21,13 +21,13 @@ import (
 	"time"
 )
 
-//go:embed assets/*
+//go:embed infrastructure/assets/*
 var Assets embed.FS
 
-//go:embed templates/*
+//go:embed infrastructure/templates/*
 var Templates embed.FS
 
-//go:embed public/*
+//go:embed infrastructure/public/*
 var pwaManifest embed.FS
 var gt_dsn string
 
@@ -41,6 +41,7 @@ func globalRecover(c *gin.Context, err any) {
 		Dsn:     gt_dsn,
 		Release: Commit,
 	})
+
 	recovered := recover()
 	if recovered != nil {
 		sentry.CaptureException(recovered.(error))
@@ -72,7 +73,8 @@ var Commit = func() string {
 }()
 
 func main() {
-	appCtx := scheduledTasks.AppContext{}
+	appCtx := domain.AppContext{}
+	appCtx.Logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Llongfile)
 	appCtx.Db = db.GetDbInstance()
 	appCtx.Redis = redis.NewClient(&redis.Options{
 		Addr:     "cache:6379",
@@ -84,7 +86,7 @@ func main() {
 	// they are sent before we shut down
 
 	//load gtfs
-	if g, err := gtfs.Load("/var/lib/gtfs", nil); err != nil {
+	/*if g, err := gtfs.Load("/var/lib/gtfs", nil); err != nil {
 		y := scheduledTasks.GTFSUpdaterTask()
 		y.Handler(appCtx)
 		g, _ := gtfs.Load("/var/lib/gtfs", nil)
@@ -92,9 +94,9 @@ func main() {
 	} else {
 		appCtx.Gtfs = g
 	}
-	schedRunner := scheduledTasks.NewTaskRunner()
+	schedRunner := domain.NewTaskRunner()
 	schedRunner.AddTask("havariaUpdaterTask", scheduledTasks.HavarianUpdaterTask())
-	schedRunner.AddTask("trainWatchTask", scheduledTasks.WatchTrainsTask())
+	schedRunner.AddTask("trainWatchTask", scheduledTasks.TrainWatchTask{}.Handler)
 	schedRunner.AddTask("EngineLoggerTask", scheduledTasks.EngineLoggerTask())
 	schedRunner.AddTask("GTFSUpdaterTask", scheduledTasks.GTFSUpdaterTask())
 	schedRunner.AddTask("VPEUpdaterTask", scheduledTasks.VPELoggerTask())
@@ -102,7 +104,7 @@ func main() {
 	go y.Handler(appCtx)
 	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
-
+	*/
 	r := gin.New()
 	r.TrustedPlatform = gin.PlatformCloudflare
 	r.Use(gin.Logger())
@@ -116,10 +118,10 @@ func main() {
 	})
 	r.Use(auth.SessionMiddleware)
 	gvEngine := ginview.New(goview.Config{
-		Root:         "templates",
+		Root:         "infrastructure/templates",
 		Extension:    ".tmpl",
 		Master:       "layouts/master",
-		Funcs:        GetFuncMap(),
+		Funcs:        infrastructure.GetFuncMap(),
 		DisableCache: true,
 		Delims:       goview.Delims{Left: "{{", Right: "}}"},
 	})
@@ -183,7 +185,7 @@ func main() {
 		})
 	})
 
-	appCtx.Db.AutoMigrate(M.WatchedTrain{})
+	appCtx.Db.AutoMigrate(domain.WatchedTrain{})
 
 	r.Run(":12700") // listen and serve on 0.0.0.0:12700
 }

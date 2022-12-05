@@ -1,0 +1,204 @@
+{{define "title"}}Home{{end}}
+{{define "file" }}timetable{{end}}
+{{define "headContent" }}
+    <style>
+        [data-href] {
+            cursor: pointer;
+        }
+    </style>
+{{end}}
+{{define "footerContent" }}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.min.js"></script>
+    <script>
+        $("table").on('click-row.bs.table', function (e, row, $element) {
+            window.location = $element.data('href');
+        });</script>
+{{end}}
+
+{{define "main" }}
+    <h4>{{.station.Station.Name}}</h4>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
+                    type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Arrival
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane"
+                    type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Departure
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
+             tabindex="0">
+            <div class="table-responsive">
+                <table class="/*table table-sm table-borderless*/">
+                    <tbody class="d-flex flex-column">
+                    {{ range $x, $value := .arrival }}
+                        <pre>{{$value|json}}</pre>
+                        <tr
+                                class="
+    {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
+                bg-success text-light
+            {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
+              bg-warning
+            {{else  if (delayInRange $value.HavarianInfok.AktualisKeses 3.0 999.0)}}
+               bg-danger text-light
+            {{end}}
+
+">
+
+                            <td>
+                                <div class="d-flex" style="
+                                        padding: 2px 5px;
+                                        border-radius: 4px;
+                                        color: #{{$value.ViszonylatiJel.HatterSzinKod}};
+                                        ">
+                                    {{if $value.ViszonylatiJel.Sign.Character}}
+                                    <span style="font-family: MNR;font-size:2.5ch;
+                                            color: #{{$value.ViszonylatiJel.FontSzinKod}};
+                                            ">
+                                        {{$value.ViszonylatiJel.Sign.Character}}
+                                    </span>
+                                    {{else}}
+                                    <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                                         style="
+                                margin: 2px;
+                                max-height: 3ch;
+                                border-radius: 3px;
+                                padding: 5px;
+                                margin-right:1ch;
+                                width: 4ch;
+                        {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
+                            fill: #{{$value.ViszonylatiJel.HatterSzinKod}};
+                            border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+                            background-color:#{{$value.ViszonylatiJel.FontSzinKod}}
+                        {{else}}
+                            fill: #{{$value.Kind.BackgroundColorCode}};
+                            border: 1px solid #{{$value.Kind.ForegroundColorCode}};
+                            background-color:#{{$value.Kind.ForegroundColorCode}}
+                        {{end}}">
+
+                                        <svg style="height: 12px; width:24px; ">
+                                            <use href="/public/infrastructure/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
+                                        </svg>
+                                        {{end}}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{$value.Arrive | loctime}}
+                                {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
+                                    <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc
+                                        )</small>
+                                {{end}}
+                            </td>
+                            <td>
+                                <a href="/train/{{$value.TrainID}}"> {{ $value|getTrainName }}</a>
+                            </td>
+                            <td>
+                                <div>
+                                    <div class="d-md-block d-none ms-1">({{$value.StartStation.Name}}
+                                        <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})
+                                    </div>
+                                    <div class="align-items-center d-flex d-md-none flex-row justify-content-center">
+                                        <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
+                                </div>
+                            </td>
+
+                        </tr>
+
+                    {{ end }}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <div class="table-responsive">
+                <table class="table table-sm table-borderless">
+
+                    {{ range $x, $value := .departure}}
+
+                        <tr class="
+    {{if (delayInRange $value.HavarianInfok.AktualisKeses 0 2.0)}}
+                table-success
+            {{else if (delayInRange $value.HavarianInfok.AktualisKeses 2.0 3.0)}}
+              table-warning
+            {{else  if (delayInRange $value.HavarianInfok.AktualisKeses 3.0 999.0)}}
+               table-danger
+            {{end}}
+
+">
+                            <td>
+                                <div class="d-flex" style="
+                                        padding: 2px 5px;
+                                        border-radius: 4px;
+                                        color: #{{$value.Kind.BackgroundColorCode}};
+                                        ">
+                                    {{if $value.ViszonylatiJel.Sign.Character}}
+                                    <span style="font-family: MNR;font-size:2.5ch;
+                                            color: #{{$value.ViszonylatiJel.FontSzinKod}};
+                                            ">
+                                        {{$value.ViszonylatiJel.Sign.Character}}
+                                    </span>
+                                    {{else}}
+                                    <div class="align-items-center align-self-center d-flex flex-shrink-0 justify-content-center"
+                                         style="
+                                margin: 2px;
+                                max-height: 3ch;
+                                border-radius: 3px;
+                                padding: 5px;
+                                margin-right:1ch;
+                                width: 4ch;
+                        {{if ne $value.ViszonylatiJel.FontSzinKod  ""}}
+                            fill: #{{$value.ViszonylatiJel.FontSzinKod}};
+                            border: 1px solid #{{$value.ViszonylatiJel.FontSzinKod}};
+                            background-color:#{{$value.ViszonylatiJel.HatterSzinKod}}
+                        {{else}}
+                            fill: #{{$value.Kind.BackgroundColorCode}};
+                            border: 1px solid #{{$value.Kind.ForegroundColorCode}};
+                            background-color:#{{$value.Kind.ForegroundColorCode}}
+                        {{end}}">
+
+                                        <svg style="height: 12px; width:24px; ">
+                                            <use href="public/infrastructure/assets/trainclasses.svg#icon-train-{{$value.FullType|toIconName}}"/>
+                                        </svg>
+                                        {{end}}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{$value.Start | loctime}}
+                                {{if gt  $value.HavarianInfok.AktualisKeses 0.0}}
+                                    <small class="text-nowrap"> (+ {{$value.HavarianInfok.AktualisKeses}} perc
+                                        )</small>
+                                {{end}}
+                            </td>
+                            <td>
+                                <a href="/train/{{$value.TrainID}}"> {{ $value|getTrainName }}</a>
+                            </td>
+                            <td>
+                                <div>
+                                    <div class="d-md-block d-none ms-1">({{$value.StartStation.Name}}
+                                        <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}})
+                                    </div>
+                                    <div class="align-items-center d-flex d-md-none flex-row justify-content-center">
+                                        <i
+                                                class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}</div>
+                                </div>
+                            </td>
+
+                        </tr>
+                        </a>
+                    {{ end }}
+
+
+                </table>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+
+ 
