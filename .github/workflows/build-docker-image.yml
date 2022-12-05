@@ -35,6 +35,7 @@ jobs:
           username: ${{ secrets.CR_USER }}
           password: ${{ secrets.CR_PASSWORD }}
       - name: Remove old image
+        continue-on-error: true
         run: |
           docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
       - name: Extract metadata (tags, labels) for Docker
