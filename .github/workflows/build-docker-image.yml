@@ -36,7 +36,7 @@ jobs:
           password: ${{ secrets.CR_PASSWORD }}
       - name: Remove old image
         run: |
-          docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
+          docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
