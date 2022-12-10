@@ -2,10 +2,11 @@ package domain
 
 import (
 	"fmt"
-	"github.com/artonge/go-gtfs"
 	"log"
 	"runtime/debug"
 	"time"
+
+	"github.com/artonge/go-gtfs"
 
 	"github.com/go-redis/redis/v9"
 	"gorm.io/gorm"
@@ -32,8 +33,13 @@ type TaskRunner struct {
 	tasks  map[string]*Schedule
 }
 
-func (t *TaskRunner) AddTask(name string, task *Schedule) {
-	t.tasks[name] = task
+func (t *TaskRunner) AddTask(name string, task ITask) {
+
+	t.tasks[name] = &Schedule{
+		Interval: task.GetInterval(),
+		LastRun:  time.Now(),
+		Handler:  task.Handler,
+	}
 }
 func (t *TaskRunner) RunTask(ctx AppContext) {
 	defer func() {

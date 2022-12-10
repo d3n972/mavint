@@ -3,6 +3,13 @@ package main
 import (
 	"embed"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"path/filepath"
+	"runtime/debug"
+	"time"
+
 	"github.com/artonge/go-gtfs"
 	"github.com/d3n972/mavint/application/auth"
 	"github.com/d3n972/mavint/application/scheduledTasks"
@@ -15,12 +22,6 @@ import (
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	redis "github.com/go-redis/redis/v9"
-	"log"
-	"net/http"
-	"os"
-	"path/filepath"
-	"runtime/debug"
-	"time"
 )
 
 //go:embed infrastructure/assets/*
@@ -89,7 +90,7 @@ func main() {
 
 	//load gtfs
 	if g, err := gtfs.Load("/var/lib/gtfs", nil); err != nil {
-		y := scheduledTasks.GTFSUpdaterTask()
+		y := scheduledTasks.GTFSUpdaterTask{}
 		y.Handler(appCtx)
 		g, _ := gtfs.Load("/var/lib/gtfs", nil)
 		appCtx.Gtfs = g
@@ -97,13 +98,11 @@ func main() {
 		appCtx.Gtfs = g
 	}
 	schedRunner := domain.NewTaskRunner()
-	schedRunner.AddTask("havariaUpdaterTask", scheduledTasks.HavarianUpdaterTask())
-	schedRunner.AddTask("trainWatchTask", scheduledTasks.TrainWatchTask{}.Handler)
-	schedRunner.AddTask("EngineLoggerTask", scheduledTasks.EngineLoggerTask())
-	schedRunner.AddTask("GTFSUpdaterTask", scheduledTasks.GTFSUpdaterTask())
-	schedRunner.AddTask("VPEUpdaterTask", scheduledTasks.VPELoggerTask())
-	y := scheduledTasks.VPELoggerTask()
-	go y.Handler(appCtx)
+	schedRunner.AddTask("havariaUpdaterTask", scheduledTasks.HavariaUpdaterTask{})
+	schedRunner.AddTask("trainWatchTask", scheduledTasks.TrainWatchTask{})
+	schedRunner.AddTask("EngineLoggerTask", scheduledTasks.NewEngineLoggerTask())
+	schedRunner.AddTask("GTFSUpdaterTask", scheduledTasks.GTFSUpdaterTask{})
+	//schedRunner.AddTask("VPEUpdaterTask", scheduledTasks.VPELoggerTask())
 	go schedRunner.Start(appCtx)
 	os.Setenv("TZ", "Europe/Budapest")
 
@@ -143,7 +142,6 @@ func main() {
 	newsController := controllers.NewsController{}
 	twController := controllers.TrainWatchController{}
 	edController := controllers.EngineDetailsController{}
-	vpeController := controllers.VpeController{}
 
 	r.GET("/ed", edController.CountsForDay)
 	r.GET("/ed/:date/:uic", edController.Render)
@@ -179,7 +177,6 @@ func main() {
 	})
 	r.GET("/map", mapController.Render)
 	r.GET("/map/getdata", mapController.GetData)
-	r.GET("/vpe", vpeController.Render)
 
 	r.GET("/train/:train", tdCtrl.Render)
 	r.GET("/ticket", ticketCtrl.Render)

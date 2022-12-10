@@ -3,11 +3,6 @@ package scheduledTasks
 import (
 	"context"
 	"encoding/xml"
-	"github.com/d3n972/mavint/domain"
-	"github.com/d3n972/mavint/domain/dao"
-	"github.com/d3n972/mavint/domain/models"
-	models2 "github.com/d3n972/mavint/domain/models"
-	"github.com/d3n972/mavint/domain/repository"
 	"io"
 	"math"
 	"net/http"
@@ -15,6 +10,12 @@ import (
 	"sort"
 	"strings"
 	"time"
+
+	"github.com/d3n972/mavint/domain"
+	"github.com/d3n972/mavint/domain/dao"
+	"github.com/d3n972/mavint/domain/models"
+	models2 "github.com/d3n972/mavint/domain/models"
+	"github.com/d3n972/mavint/domain/repository"
 )
 
 var _ domain.ITask = NewEngineLoggerTask()

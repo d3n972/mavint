@@ -5,16 +5,39 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"github.com/d3n972/mavint/domain"
-	"github.com/d3n972/mavint/domain/models"
 	"io"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/d3n972/mavint/domain"
+	"github.com/d3n972/mavint/domain/models"
 )
 
-func _apigetdata() models.MapTrainsResponse {
+type HavariaUpdaterTask struct {
+	interval time.Duration
+}
+
+func (h HavariaUpdaterTask) GetInterval() time.Duration {
+	return 40 * time.Second
+}
+func (h HavariaUpdaterTask) Handler(ctx domain.AppContext) {
+	R := ctx.Redis
+	if R.Exists(context.TODO(), "havariaCache").Val() != 222 {
+		hc := models.HavariaCache{}
+		trains := h._apigetdata().D.Result.Trains.Train
+		for _, t := range trains {
+			tn := strings.Replace(t.TrainNumber, "55", "", 1)
+			hc[tn] = models.HavariaCacheEntry{Time: t.Delay}
+		}
+		b, e := json.Marshal(hc)
+		if e != nil {
+		}
+		R.Set(context.TODO(), "havariaCache", b, 5*time.Minute)
+	}
+}
+func (h HavariaUpdaterTask) _apigetdata() models.MapTrainsResponse {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -61,24 +84,4 @@ func _apigetdata() models.MapTrainsResponse {
 	mtr := models.MapTrainsResponse{}
 	json.Unmarshal(respBytes, &mtr)
 	return mtr
-}
-func HavarianUpdaterTask() *domain.Schedule {
-	return &domain.Schedule{
-		Interval: 1 * time.Minute,
-		Handler: func(ctx domain.AppContext) {
-			R := ctx.Redis
-			if R.Exists(context.TODO(), "havariaCache").Val() != 222 {
-				hc := models.HavariaCache{}
-				trains := _apigetdata().D.Result.Trains.Train
-				for _, t := range trains {
-					tn := strings.Replace(t.TrainNumber, "55", "", 1)
-					hc[tn] = models.HavariaCacheEntry{Time: t.Delay}
-				}
-				b, e := json.Marshal(hc)
-				if e != nil {
-				}
-				R.Set(context.TODO(), "havariaCache", b, 5*time.Minute)
-			}
-		},
-	}
 }

@@ -1,9 +1,9 @@
 FROM golang:1-alpine as build
-RUN apk add git
 RUN mkdir /app
 WORKDIR /app
 COPY go.* /app/
 RUN go mod download
+RUN apk add git
 COPY ./ /app/
 RUN go build -o /usr/bin/appsrv -buildvcs=true ./
 

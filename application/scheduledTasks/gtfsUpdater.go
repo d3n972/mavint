@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"encoding/base64"
 	"fmt"
-	"github.com/d3n972/mavint/domain"
 	"io"
 	"io/fs"
 	"log"
@@ -13,6 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/d3n972/mavint/domain"
 )
 
 func (g GTFSUpdaterTask) basicAuth(username, password string) string {
@@ -76,6 +77,9 @@ type GTFSUpdaterTask struct {
 	interval time.Duration
 }
 
+func (g GTFSUpdaterTask) GetInterval() time.Duration {
+	return 6 * time.Hour
+}
 func (g GTFSUpdaterTask) Handler(ctx domain.AppContext) {
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", "https://www.mavcsoport.hu/gtfs/gtfsMavMenetrend.zip", nil)

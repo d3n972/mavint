@@ -14,23 +14,27 @@ import (
 	"github.com/d3n972/mavint/domain/models"
 	"github.com/d3n972/mavint/domain/repository"
 	services2 "github.com/d3n972/mavint/infrastructure/services"
+	"gorm.io/gorm"
 )
 
 type TrainWatchTask struct {
 	interval time.Duration
 }
 
+func (t TrainWatchTask) GetInterval() time.Duration {
+	return 40 * time.Second
+}
 func (t TrainWatchTask) Handler(ctx domain.AppContext) {
 	_tz := time.Local
 	time.LoadLocation("UTC")
 	R := ctx.Redis
 	if R.Exists(context.TODO(), "havariaCache").Val() != 0 {
-		fmt.Println("we have havaria")
+		fmt.Println("we have havaria\n")
 		hc := models.HavariaCache{}
 		cacheObject, _ := R.Get(context.TODO(), "havariaCache").Bytes()
 		json.Unmarshal(cacheObject, &hc)
 		trains := []domain.WatchedTrain{}
-		repo := repository.NewRepository[dao.WatchedTrainDAO, domain.WatchedTrain](context.Background())
+		repo := repository.NewRepository[dao.WatchedTrainDAO, domain.WatchedTrain](context.WithValue(context.Background(), "db", any(*ctx.Db).(gorm.DB)))
 		trains, err := repo.Find(context.Background(), repository.NewRelationSpecification(
 			"watch_until", repository.GreaterOrEq, time.Now().UTC().Format(time.RFC3339)))
 		if err != nil {
