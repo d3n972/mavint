@@ -143,6 +143,7 @@ func main() {
 	newsController := controllers.NewsController{}
 	twController := controllers.TrainWatchController{}
 	edController := controllers.EngineDetailsController{}
+	vpeController := controllers.VpeController{}
 
 	r.GET("/ed", edController.CountsForDay)
 	r.GET("/ed/:date/:uic", edController.Render)
@@ -178,6 +179,7 @@ func main() {
 	})
 	r.GET("/map", mapController.Render)
 	r.GET("/map/getdata", mapController.GetData)
+	r.GET("/vpe", vpeController.Render)
 
 	r.GET("/train/:train", tdCtrl.Render)
 	r.GET("/ticket", ticketCtrl.Render)
