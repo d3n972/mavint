@@ -35,8 +35,14 @@ func (t TrainWatchTask) Handler(ctx domain.AppContext) {
 		json.Unmarshal(cacheObject, &hc)
 		trains := []domain.WatchedTrain{}
 		repo := repository.NewRepository[dao.WatchedTrainDAO, domain.WatchedTrain](context.WithValue(context.Background(), "db", any(*ctx.Db).(gorm.DB)))
-		trains, err := repo.Find(context.Background(), repository.NewRelationSpecification(
-			"watch_until", repository.GreaterOrEq, time.Now().UTC().Format(time.RFC3339)))
+		trains, err := repo.Find(
+			context.Background(),
+			repository.NewRelationSpecification(
+				"watch_until",
+				repository.GreaterOrEq,
+				time.Now().UTC().Format(time.RFC3339),
+			),
+		)
 		if err != nil {
 			//log error
 		}

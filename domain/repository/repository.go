@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"gorm.io/gorm"
 )
 
@@ -52,7 +53,7 @@ func (r *Repository[M, E]) FindByID(ctx context.Context, id uint) (*E, error) {
 func (r *Repository[M, E]) Find(ctx context.Context, specification Specification, params ...any) ([]E, error) {
 	// retreive reords by some criteria
 	var models []M
-	if err := r.db.WithContext(ctx).Where(specification.Query(), specification.Value()...).Find(&models).Error; err != nil {
+	if err := r.db.WithContext(ctx).Where(specification.Query()).Find(&models).Error; err != nil {
 		return []E{}, err
 	}
 	// mapp all records into Entities
