@@ -35,7 +35,7 @@ func (e EngineLoggerTask) Handler(ctx domain.AppContext) {
 	ctx.Db.AutoMigrate(domain.EngineWorkday{})
 	emigData := e.emig_getData()
 	for _, engine := range emigData.Mozdonyok.Mozdony {
-		dbctx := context.WithValue(context.Background(), "db", ctx.Db)
+		dbctx := context.WithValue(context.Background(), "db", *ctx.Db)
 		repo := repository.NewRepository[dao.EngineWorkdayDAO,
 			domain.EngineWorkday](dbctx)
 		res, err := repo.Find(dbctx, repository.NewAndSpecification(

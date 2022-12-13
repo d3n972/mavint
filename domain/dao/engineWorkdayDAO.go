@@ -15,6 +15,9 @@ type EngineWorkdayDAO struct {
 	NearestStation *string
 }
 
+func (e2 EngineWorkdayDAO) TableName() string {
+	return "engine_workdays"
+}
 func (e2 EngineWorkdayDAO) FromEntity(e domain.EngineWorkday) repository.DAO[domain.EngineWorkday] {
 	return EngineWorkdayDAO{
 		UIC:            e2.UIC,
