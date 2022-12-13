@@ -12,6 +12,9 @@ import (
 
 func GetFuncMap() template.FuncMap {
 	return template.FuncMap{
+		"unescapeHTML": func(s string) template.HTML {
+			return template.HTML(s)
+		},
 		"humandate": func(t time.Time) string {
 			return t.Format("2006. 01. 02. 15:04")
 		},

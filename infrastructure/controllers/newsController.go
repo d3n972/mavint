@@ -5,14 +5,16 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"io"
+	"log"
+	"net/http"
+	"regexp"
+	"strings"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/d3n972/mavint/domain/models"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v9"
-	"io"
-	"log"
-	"net/http"
-	"strings"
 )
 
 type NewsController struct{}
@@ -51,6 +53,11 @@ func (n *NewsController) apiGetData() *models.RssFeed {
 	xml.Unmarshal(respBytes, &rf)
 	return &rf
 }
+
+func (n *NewsController) linkifyTrainNumbers(articleBody string) string {
+	re := regexp.MustCompile(`(IR|IC|EC|EN|rjx|RX)?(\d{3,5})(^:\-)*`)
+	return re.ReplaceAllString(articleBody, `<a href="/m?tid=$2$3">$1$2$3</a>`)
+}
 func (n *NewsController) Render(ctx *gin.Context) {
 	rss := n.apiGetData()
 	ctx.HTML(http.StatusOK, "pages/news", gin.H{
@@ -85,7 +92,7 @@ func (n *NewsController) RenderArticle(ctx *gin.Context) {
 		art := aricle{
 			Title:       title,
 			Publication: publication,
-			Content:     content,
+			Content:     n.linkifyTrainNumbers(content),
 		}
 		jsonArticle, _ := json.Marshal(art)
 		rdb.Set(bgCtx, "article:"+ctx.Query("id"), jsonArticle, 0)
