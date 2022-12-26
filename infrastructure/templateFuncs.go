@@ -214,9 +214,9 @@ func CSSColByDelay[T interface {
 	} else if d > 40*time.Minute && d <= 50*time.Minute {
 		colorCode = "#c1570b"
 	} else if d > 50*time.Minute && d <= 60*time.Minute {
-		colorCode = "#b6100a"
+		colorCode = "#580a00"
 	} else if d > 60*time.Minute {
-		colorCode = "#6e0e0a"
+		colorCode = "#580a00"
 	} else {
 		colorCode = "#99ffdd"
 	}

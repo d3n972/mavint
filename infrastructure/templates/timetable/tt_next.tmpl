@@ -63,19 +63,26 @@
                     {{if $havinfo.HasEntry $idx}}
                         {{ if (iDelayInRange .Time 0.0 1.0) }}
                             background-color:  #68C646;
+                            --bs-body-color: #2b2b2b;
+                            
                         {{else if (iDelayInRange .Time 1.0 3.0) }}
                             background-color:  #ABCC24;
+                            --bs-body-color: #2b2b2b;
                         {{else if (iDelayInRange .Time 3.0 5.0) }}
                             background-color: #EED202;
+                            --bs-body-color: #2b2b2b;
                         {{else if (iDelayInRange .Time 5.0 8.0) }}
                             background-color: #D57f0e;
+                            --bs-body-color: #2b2b2b;
                         {{else if (iDelayInRange .Time 8.0 15.0) }}
                             background-color: #c95614;
+                            --bs-body-color: #2b2b2b;
                         {{else if (iDelayInRange .Time 15.0 2000.0) }}
-                            background-color:  #BC2C1A;
-                                    color: white;
+                            background-color:  #580a00;
+                            --bs-body-color:: white;
                         {{ end }}
                     {{end}}
+                    color: var(--bs-body-color);
                 {{end}};">
                     <div class="border d-flex p-2" >
                         <div class="col">
@@ -150,20 +157,26 @@
             {{if $havinfo.HasEntry $idx}}
              {{ if (iDelayInRange .Time 0.0 1.0) }}
              background-color:  #68C646;
+             --bs-body-color: #2b2b2b;
             {{else if (iDelayInRange .Time 1.0 3.0) }}
             background-color:  #ABCC24;
+            --bs-body-color: #2b2b2b;
             {{else if (iDelayInRange .Time 3.0 5.0) }}
             background-color: #EED202;
+            --bs-body-color: #2b2b2b;
             {{else if (iDelayInRange .Time 5.0 8.0) }}
             background-color: #D57f0e;
+            --bs-body-color: #2b2b2b;
             {{else if (iDelayInRange .Time 8.0 15.0) }}
             background-color: #c95614;
+            --bs-body-color: #2b2b2b;
             {{else if (iDelayInRange .Time 15.0 2000.0) }}
-            background-color:  #BC2C1A;
-            color: white;
+            background-color:  #580a00;
+            --bs-body-color: white;
              {{ end }}
              {{end}}
-             {{end}};">
+             {{end}};
+             color: var(--bs-body-color);">
                 <div class="border d-flex p-2" >
                     <div class="col">
                         <div class="d-flex gap-3 text-bold">
