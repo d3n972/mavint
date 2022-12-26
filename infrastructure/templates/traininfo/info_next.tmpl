@@ -158,6 +158,9 @@
                     </div>
                     <div class="align-items-center col d-flex gap-2">
                         <strong>{{$value.Station.Name}}{{if ne $value.Station.CountryIso "HU"}}, {{$value.Station.Country}}{{end}}
+                        {{if ne $value.EndTrack ""}}
+                            ({{$value.EndTrack}}. vg)
+                        {{end}}
                         </strong>
                         <div class="d-inline float-end">
                             {{ range $x, $svc := $value.Services}}

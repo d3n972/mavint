@@ -98,7 +98,10 @@
                                     {{end}}
                                 </div>
                                 <div>
-                                    {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
+                                    {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}  
+                                    {{if ne $value.EndTrack ""}}
+                                        ({{$value.EndTrack}}. vg)
+                                    {{end}}
                                 </div>
 
                             </div>
@@ -192,6 +195,9 @@
                             </div>
                             <div>
                                 {{$value.StartStation.Name}} <i class="bi bi-arrow-right"></i> {{$value.EndStation.Name}}
+                                {{if ne $value.StartTrack ""}}
+                                        ({{$value.StartTrack}}. vg)
+                                {{end}}
                             </div>
 
                         </div>
